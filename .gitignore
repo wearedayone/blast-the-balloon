@@ -1,0 +1,23 @@
+*/.env
+*/.env.stg
+*/.env.prd
+*/.env.dev
+*/.env.demo
+*/secret.json
+
+# contract secrets
+contract/*/secrets.json
+firebase/build/
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+**/.DS_Store
+node_modules/
+package-lock.json
+listener/logs/
+backend/logs/
+*/serviceAccounts/*.json
+
+test.json
