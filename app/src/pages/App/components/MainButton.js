@@ -1,91 +1,58 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+
+import useAppContext from '../../../hooks/useAppContext';
 
 const MainButton = () => {
-  const [mode, setMode] = useState('sell');
+  const {
+    userState: { gamePlay },
+    smartContractState: { buy, sell },
+  } = useAppContext();
+  const [mode, setMode] = useState('buy');
   const [confirming, setConfirming] = useState(true);
   const [confirmed, setConfirmed] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [mouseDown, setMouseDown] = useState(false);
-  const [left, setLeft] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const toggleMode = () => setMode(mode === 'buy' ? 'sell' : 'buy');
 
   const mainBtnText = mode === 'buy' ? 'Buy' : 'Sell';
   const secondBtnText = mode === 'buy' ? 'Sell' : 'Buy';
-  const mainBtnStyle =
-    mode === 'buy'
-      ? {
-          background: 'linear-gradient(129.55deg, #F69B23 1.85%, #EB3624 50.42%, #F01B7E 97.21%)',
-        }
-      : { bgcolor: '#DFFF00' };
+  const buyBtnStyle = {
+    background: 'linear-gradient(129.55deg, #F69B23 1.85%, #EB3624 50.42%, #F01B7E 97.21%)',
+  };
+  const sellBtnStyle = { bgcolor: '#DFFF00' };
+  const mainBtnStyle = mode === 'buy' ? buyBtnStyle : sellBtnStyle;
 
   const secondBtnStyle =
     mode === 'buy'
       ? { bgcolor: '#DFFF00' }
       : { background: 'linear-gradient(129.55deg, #F69B23 1.85%, #EB3624 50.42%, #F01B7E 97.21%)' };
 
+  const max = mode === 'buy' ? Infinity : gamePlay?.numberOfPump || 0;
+  const canDecrease = quantity > 1;
+  const canIncrease = quantity < max;
+  const decrease = () => canDecrease && setQuantity(quantity - 1);
+  const increase = () => canIncrease && setQuantity(quantity + 1);
+
+  useEffect(() => {
+    setQuantity(mode === 'buy' ? 1 : 0);
+  }, [mode]);
+
   const makeTxn = async () => {
+    if (loading) return;
     setLoading(true);
     try {
-      console.log('makeTxn here', { mode, quantity });
+      const fn = mode === 'buy' ? buy : sell;
+      await fn({ amount: quantity });
       setConfirmed(true);
     } catch (err) {
       console.error(err);
     }
     setLoading(false);
   };
-
-  const timeout = useRef();
-  const confirmTxn = async () => {
-    if (timeout.current) {
-      clearTimeout(timeout.current);
-      timeout.current = null;
-    }
-
-    timeout.current = setTimeout(makeTxn, 300);
-  };
-
-  useEffect(() => {
-    setLeft(0);
-    canTriggerOnClick.current = true;
-  }, [mode, confirming, confirmed]);
-
-  useEffect(() => {
-    window.addEventListener('mouseup', () => setMouseDown(false));
-  }, []);
-
-  const canTriggerOnClick = useRef(true);
-  useEffect(() => {
-    const onMouseMove = (e) => {
-      const buttonSize = 70;
-      const windowWidth = window.innerWidth;
-      const sliderWidth = 240;
-      const startX = windowWidth / 2 - sliderWidth / 2;
-      if (startX > e.clientX) {
-        setLeft(0);
-        return;
-      }
-
-      setLeft(Math.min(e.clientX - startX - buttonSize / 2, sliderWidth - buttonSize / 2));
-      if (e.clientX - startX - buttonSize / 2 >= sliderWidth - buttonSize / 2) {
-        canTriggerOnClick.current = false;
-        confirmTxn();
-      } else {
-        canTriggerOnClick.current = true;
-      }
-    };
-
-    if (mouseDown && !loading) {
-      window.addEventListener('mousemove', onMouseMove, false);
-
-      return () => window.removeEventListener('mousemove', onMouseMove, false);
-    } else {
-      window.removeEventListener('mousemove', onMouseMove, false);
-    }
-  }, [mouseDown, loading]);
 
   if (confirmed) {
     if (mode === 'buy') {
@@ -103,7 +70,6 @@ const MainButton = () => {
             setConfirmed(false);
             setConfirming(false);
             setQuantity(1);
-            canTriggerOnClick.current = true;
           }}>
           <Typography fontSize={25} fontWeight={700} fontFamily="Oxygen, sans-serif" color="#2A2A2A" align="center">
             Confirmed
@@ -125,7 +91,6 @@ const MainButton = () => {
           setConfirmed(false);
           setConfirming(false);
           setQuantity(1);
-          canTriggerOnClick.current = true;
         }}>
         <Typography fontSize={25} fontWeight={700} fontFamily="Oxygen, sans-serif" color="#fff" align="center">
           Confirmed
@@ -135,132 +100,58 @@ const MainButton = () => {
   }
 
   if (confirming) {
-    if (mode === 'buy') {
-      return (
-        <Box
-          pr={2}
-          height="52px"
-          width="240px"
-          bgcolor="#DFFF00"
-          borderRadius="90px"
-          position="relative"
-          display="flex"
-          alignItems="center">
-          <Box
-            position="absolute"
-            top="50%"
-            left={`${left}px`}
-            width="70px"
-            borderRadius="50%"
-            display="flex"
-            flexDirection="column"
-            gap={0.5}
-            sx={{
-              transform: 'translate(-10%, -50%)',
-              cursor: 'pointer',
-              aspectRatio: '1/1',
-              background: 'linear-gradient(129.55deg, #F69B23 1.85%, #EB3624 50.42%, #F01B7E 97.21%)',
-            }}
-            onClick={() => !loading && canTriggerOnClick.current && setQuantity(quantity + 1)}
-            onMouseDown={() => setMouseDown(true)}>
-            <Typography
-              fontSize={45}
-              fontWeight={500}
-              color="#12140D"
-              align="center"
-              lineHeight="45px"
-              sx={{ userSelect: 'none' }}>
-              {quantity}
-            </Typography>
-            <Typography
-              fontSize={20}
-              color="#12140D"
-              align="center"
-              lineHeight="22px"
-              sx={{ transform: 'translateY(-10px)', userSelect: 'none' }}>
-              PUMP
-            </Typography>
-          </Box>
-          <Box width="70px" />
-          <Box flex={1} ml={1.5}>
-            <Typography fontSize={12} color="#12140D">
-              DRAG TO CONFIRM
-            </Typography>
-          </Box>
-          <ShoppingCartOutlinedIcon sx={{ color: '#EE265B' }} />
-        </Box>
-      );
-    }
-
     return (
-      <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-        <Box ml={3}>
-          <Typography fontSize={20} color="#DFFF00" lineHeight="20px">
-            ARE YOU SURE?
-          </Typography>
-          <Typography
-            fontSize={14}
-            fontWeight={300}
-            fontFamily="Oswald, sans-serif"
-            color="white"
-            lineHeight="14px"
-            letterSpacing="-2%">
-            Sales are subject to 40% tax !
-          </Typography>
-        </Box>
-        <Box
-          pr={2}
-          height="52px"
-          width="240px"
-          borderRadius="90px"
-          position="relative"
-          display="flex"
-          alignItems="center"
-          sx={{ background: 'linear-gradient(180deg, #DFFF00 0%, #979000 100%)' }}>
-          <Box
-            position="absolute"
-            top="50%"
-            left={`${left}px`}
-            width="70px"
-            borderRadius="50%"
-            display="flex"
-            flexDirection="column"
-            gap={0.5}
-            bgcolor="#DFFF00"
-            sx={{
-              cursor: 'pointer',
-              aspectRatio: '1/1',
-              transform: 'translate(-10%, -50%)',
-            }}
-            onClick={() => !loading && canTriggerOnClick.current && setQuantity(quantity + 1)}
-            onMouseDown={() => setMouseDown(true)}>
-            <Typography
-              fontSize={45}
-              fontWeight={500}
-              color="#12140D"
-              align="center"
-              lineHeight="45px"
-              sx={{ userSelect: 'none' }}>
+      <Box display="flex" flexDirection="column" gap={1}>
+        <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+          <RemoveCircleOutlineIcon
+            sx={{ color: '#DFFF00', cursor: canDecrease ? 'pointer' : 'default', opacity: canDecrease ? 1 : 0.5 }}
+            onClick={decrease}
+          />
+          <Box px={2} py={0.5} bgcolor="#DFFF00" display="flex" flexDirection="column" gap={1}>
+            <Typography fontSize={35} fontWeight={500} align="center" lineHeight="30px">
               {quantity}
             </Typography>
-            <Typography
-              fontSize={20}
-              color="#12140D"
-              align="center"
-              lineHeight="22px"
-              sx={{ transform: 'translateY(-10px)', userSelect: 'none' }}>
+            <Typography fontSize={20} align="center" lineHeight="20px">
               PUMP
             </Typography>
           </Box>
-          <Box width="70px" />
-          <Box flex={1} ml={1.5}>
-            <Typography fontSize={12} color="#12140D">
-              DRAG TO CONFIRM
+          <AddCircleOutlineIcon
+            sx={{ color: '#DFFF00', cursor: canIncrease ? 'pointer' : 'default', opacity: canIncrease ? 1 : 0.5 }}
+            onClick={increase}
+          />
+        </Box>
+        <Box px={4} py={0.5} display="flex" alignItems="center" justifyContent="center" bgcolor="#DFFF00">
+          <Typography fontSize={12} align="center" color="#12140D">
+            PRICE: ETH
+          </Typography>
+        </Box>
+        <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+          <Box
+            position="relative"
+            width={mode === 'buy' ? '55px' : '28px'}
+            borderRadius="50%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ aspectRatio: '1/1', cursor: 'pointer', ...buyBtnStyle }}
+            onClick={() => (mode !== 'buy' ? setMode('buy') : makeTxn())}>
+            <Typography fontSize={mode === 'buy' ? 17 : 9} fontWeight={600}>
+              BUY
             </Typography>
           </Box>
-          <Typography fontSize={13} fontWeight={500}>
-            SELL
-          </Typography>
+          <Box
+            position="relative"
+            width={mode === 'sell' ? '55px' : '28px'}
+            borderRadius="50%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ aspectRatio: '1/1', cursor: 'pointer', ...sellBtnStyle }}
+            onClick={() => (mode !== 'sell' ? setMode('sell') : makeTxn())}>
+            <Typography fontSize={mode === 'sell' ? 17 : 9} fontWeight={600}>
+              SELL
+            </Typography>
+          </Box>
         </Box>
       </Box>
     );

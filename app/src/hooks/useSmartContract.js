@@ -7,7 +7,7 @@ import { useSnackbar } from 'notistack';
 import environments from '../utils/environments';
 import Game from '../assets/abis/Game.json';
 
-const { NETWORK_ID, GAME_ADDRESS } = environments;
+const { GAME_ADDRESS } = environments;
 
 const useSmartContract = ({ provider, checkNetwork, user }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -44,7 +44,26 @@ const useSmartContract = ({ provider, checkNetwork, user }) => {
     // TODO: implement backend listener to update user code in firestore
   };
 
-  return { createReferralCode };
+  const buy = async ({ amount }) => {
+    await checkNetwork();
+    const gameContract = getGameContract();
+
+    let inviterId = 0;
+    if (user?.inviteCode) {
+      inviterId = await gameContract.pIDxRefC_(formatBytes32String(user.inviteCode));
+    }
+
+    const userId = await gameContract.pIDxAddr_(user?.address);
+    await gameContract.buyPumpXID(Number(userId.toString()), inviterId, amount);
+  };
+
+  const sell = async ({ amount }) => {
+    await checkNetwork();
+    const gameContract = getGameContract();
+    await gameContract.sell(amount);
+  };
+
+  return { createReferralCode, buy, sell };
 };
 
 export default useSmartContract;
