@@ -10,7 +10,7 @@ import Referral from './components/Referral';
 import Timer from './components/Timer';
 import UserInfo from './components/UserInfo';
 import Winner from './components/Winner';
-import useAppContext from '../../hooks/\buseAppContext';
+import useAppContext from '../../hooks/useAppContext';
 
 const App = () => {
   const { userState, seasonState, leaderboardState, walletState } = useAppContext();

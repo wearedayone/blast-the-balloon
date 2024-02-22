@@ -19,6 +19,7 @@ const useWallet = () => {
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState(null);
 
+  // utils
   const checkNetwork = async () => {
     if (!provider) return;
 
@@ -54,8 +55,7 @@ const useWallet = () => {
     await createUser({ message, signature });
   };
 
-  // console.log(ethereum, ethereum.networkVersion, NETWORK_ID);
-
+  // wallet functions
   const connectWallet = async () => {
     if (!provider) return;
 
@@ -123,6 +123,8 @@ const useWallet = () => {
     initialized,
     loading,
     address,
+    provider,
+    checkNetwork,
     connectWallet,
     logout,
     signMessage,

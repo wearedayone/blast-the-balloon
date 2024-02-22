@@ -1,6 +1,6 @@
 import { Box, Button } from '@mui/material';
 
-import useAppContext from '../../hooks/\buseAppContext';
+import useAppContext from '../../hooks/useAppContext';
 
 const Home = () => {
   const {
@@ -8,14 +8,7 @@ const Home = () => {
   } = useAppContext();
 
   return (
-    <Box
-      minHeight="100vh"
-      p={2}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-    >
+    <Box minHeight="100vh" p={2} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
       <Button variant="contained" disabled={loading} onClick={connectWallet}>
         {loading ? 'Connecting...' : 'Connect wallet'}
       </Button>

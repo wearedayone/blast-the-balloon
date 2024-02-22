@@ -1,11 +1,17 @@
+import { useState } from 'react';
 import { Box, Grid, Typography, Button } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SendIcon from '@mui/icons-material/Send';
 
+import CreateReferralCodeModal from './CreateReferralCodeModal';
+
 const Referral = ({ referrals, refCode }) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <Box display="flex" flexDirection="column">
+      <CreateReferralCodeModal open={open} onClose={() => setOpen(false)} />
       <Box position="relative">
         <img src="/images/ref-container.png" alt="ref-container" />
         <Box position="absolute" top={0} left={0} width="100%" height="100%" display="flex" flexDirection="column">
@@ -136,7 +142,8 @@ const Referral = ({ referrals, refCode }) => {
               '&:hover': {
                 bgcolor: '#DFFF00',
               },
-            }}>
+            }}
+            onClick={() => setOpen(true)}>
             <Typography fontSize={9} fontWeight={500} color="black">
               CREATE REFERRAL CODE
             </Typography>
