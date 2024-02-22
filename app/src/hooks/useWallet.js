@@ -8,7 +8,10 @@ import { createUser } from '../services/user.service';
 const { NETWORK_ID } = environments;
 
 const { ethereum } = window;
-const provider = ethereum.providers?.find((item) => item.isMetaMask) || ethereum.providers[0];
+let provider = ethereum;
+if (ethereum?.providers?.length) {
+  provider = ethereum.providers?.find((item) => item.isMetaMask) || ethereum.providers[0];
+}
 
 const useWallet = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -17,7 +20,7 @@ const useWallet = () => {
   const [address, setAddress] = useState(null);
 
   const checkNetwork = async () => {
-    if (!ethereum) return;
+    if (!provider) return;
 
     if (provider.chainId !== NETWORK_ID) {
       await provider.request({
@@ -54,7 +57,7 @@ const useWallet = () => {
   // console.log(ethereum, ethereum.networkVersion, NETWORK_ID);
 
   const connectWallet = async () => {
-    if (!ethereum) return;
+    if (!provider) return;
 
     setLoading(true);
 
@@ -81,7 +84,7 @@ const useWallet = () => {
   const logout = () => setAddress(null);
 
   const init = async () => {
-    if (!ethereum) {
+    if (!provider) {
       setInitialized(true);
       return;
     }
