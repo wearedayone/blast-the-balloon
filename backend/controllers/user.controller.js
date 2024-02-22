@@ -2,11 +2,11 @@ import * as services from '../services/user.service.js';
 
 export const addRefCode = async (req, res) => {
   try {
-    const { message, signature, refCode } = req.body;
+    const { message, signature, inviteCode } = req.body;
     const result = await services.addUserRefCode({
       message,
       signature,
-      refCode,
+      inviteCode,
     });
     return res.status(200).send(result);
   } catch (err) {

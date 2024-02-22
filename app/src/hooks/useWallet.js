@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack';
 import { Web3Provider } from '@ethersproject/providers';
 
 import environments from '../utils/environments';
-import { createUser } from '../services/user.service';
+import { createUser, addInviteCode } from '../services/user.service';
 
 const { NETWORK_ID } = environments;
 
@@ -53,6 +53,14 @@ const useWallet = () => {
     const signature = await signMessage(message);
 
     await createUser({ message, signature });
+  };
+
+  const addUserInviteCode = async ({ inviteCode }) => {
+    if (!address) return;
+    const message = `Sign this message to add your invite code\n\nThis request will not trigger a blockchain transaction or cost any gas fees.`;
+    const signature = await signMessage(message);
+
+    await addInviteCode({ message, signature, inviteCode });
   };
 
   // wallet functions
@@ -129,6 +137,7 @@ const useWallet = () => {
     logout,
     signMessage,
     createUserRecord,
+    addUserInviteCode,
   };
 };
 

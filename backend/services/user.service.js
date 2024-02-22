@@ -45,8 +45,12 @@ export const createUserRecord = async ({ message, signature }) => {
   }
 };
 
-export const addUserRefCode = async ({ message, signature, refCode }) => {
+export const addUserRefCode = async ({ message, signature, inviteCode }) => {
   const recoveredAddress = verifyMessage(message, signature).toLowerCase();
 
-  // add refCode for user with uid === recoveredAddress
+  const snapshot = await firestore.collection('user').where('referralCode', '==', inviteCode).limit(1).get();
+  if (snapshot.empty) throw new Error('Invalid invite code');
+  if (snapshot.docs[0].id === recoveredAddress) throw new Error('Invalid invite code');
+
+  await firestore.collection('user').doc(recoveredAddress).set({ inviteCode }, { merge: true });
 };

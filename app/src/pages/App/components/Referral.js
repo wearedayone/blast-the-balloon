@@ -3,11 +3,34 @@ import { Box, Grid, Typography, Button } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SendIcon from '@mui/icons-material/Send';
+import { useSnackbar } from 'notistack';
 
 import CreateReferralCodeModal from './CreateReferralCodeModal';
+import useAppContext from '../../../hooks/useAppContext';
 
 const Referral = ({ referrals, refCode }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
+  const [inviteCode, setInviteCode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const {
+    walletState: { addUserInviteCode },
+  } = useAppContext();
+
+  const submit = async () => {
+    if (loading || !inviteCode.trim()) return;
+    setLoading(true);
+
+    try {
+      await addUserInviteCode({ inviteCode });
+      enqueueSnackbar('Add invite code successfully', { variant: 'success' });
+    } catch (err) {
+      console.error(err);
+      enqueueSnackbar(err.message, { variant: 'error' });
+    }
+
+    setLoading(false);
+  };
 
   return (
     <Box display="flex" flexDirection="column">
@@ -34,8 +57,12 @@ const Referral = ({ referrals, refCode }) => {
                   outline: 'none',
                 },
               }}>
-              <input placeholder="Enter referral code here..." />
-              <SendIcon sx={{ fontSize: 14, color: 'black', cursor: 'pointer' }} />
+              <input
+                placeholder="Enter referral code here..."
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value.trim())}
+              />
+              <SendIcon sx={{ fontSize: 14, color: 'black', cursor: 'pointer' }} onClick={submit} />
             </Box>
           </Box>
           <Box flex={1} pb={1} display="flex" flexDirection="column" overflow="auto">
