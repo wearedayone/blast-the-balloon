@@ -71,13 +71,10 @@ const App = () => {
         <Grid container spacing={1}>
           <Grid item xs={4} sx={{ height: '100%' }}>
             <Box height="100%" display="flex" flexDirection="column" alignItems="flex-start">
-              <UserInfo
-                username={userState?.user?.username || ''}
-                avatarURL={userState?.user?.avatarURL}
-                address={walletState.address}
-                numberOfPump={userState?.gamePlay?.numberOfPump || 0}
-              />
-              <Box flex={1} py={1}>
+              <Box pt={2}>
+                <Logo />
+              </Box>
+              <Box flex={1}>
                 <Referral refCode={userState?.user?.referralCode || ''} referrals={userState?.referralUsers || []} />
               </Box>
               <Earnings referralReward={userState?.user?.referralReward} holderReward={userState?.user?.holderReward} />
@@ -108,7 +105,12 @@ const App = () => {
               flexDirection="column"
               justifyContent="space-between"
               alignItems="flex-end">
-              <Logo />
+              <UserInfo
+                username={userState?.user?.username || ''}
+                avatarURL={userState?.user?.avatarURL}
+                address={walletState.address}
+                numberOfPump={userState?.gamePlay?.numberOfPump || 0}
+              />
               <Leaderboard
                 leaderboardData={leaderboardState.gamePlays}
                 topHoldersRewards={leaderboardState.topHoldersRewards}

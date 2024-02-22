@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, Button } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SendIcon from '@mui/icons-material/Send';
@@ -104,23 +104,45 @@ const Referral = ({ referrals, refCode }) => {
           </Box>
         </Box>
       </Box>
-      <Box display="flex" alignItems="center" gap={1}>
-        <Box px={1} py={0.5} bgcolor="#DFFF00" display="flex" alignItems="center" gap={0.5}>
-          <Typography fontSize={9} fontWeight={500}>
-            REF CODE:
+      {refCode ? (
+        <Box display="flex" alignItems="center" gap={1}>
+          <Box px={1} py={0.5} bgcolor="#DFFF00" display="flex" alignItems="center" gap={0.5}>
+            <Typography fontSize={9} fontWeight={500}>
+              REF CODE:
+            </Typography>
+            <Typography fontSize={8} color="#12140D">
+              uponly.gg/{refCode}
+            </Typography>
+            <ContentCopyIcon
+              sx={{ ml: 1, fontSize: 14, cursor: 'pointer' }}
+              onClick={() => navigator.clipboard.writeText(refCode)}
+            />
+          </Box>
+          <Typography fontSize={11} color="#DFFF00">
+            Earn 10% On All Purchase
           </Typography>
-          <Typography fontSize={8} color="#12140D">
-            uponly.gg/{refCode}
-          </Typography>
-          <ContentCopyIcon
-            sx={{ ml: 1, fontSize: 14, cursor: 'pointer' }}
-            onClick={() => navigator.clipboard.writeText(refCode)}
-          />
         </Box>
-        <Typography fontSize={11} color="#DFFF00">
-          Earn 10% On All Purchase
-        </Typography>
-      </Box>
+      ) : (
+        <Box>
+          <Button
+            sx={{
+              px: 1,
+              py: 0.5,
+              bgcolor: '#DFFF00',
+              borderRadius: 0,
+              '&:active': {
+                bgcolor: '#DFFF00',
+              },
+              '&:hover': {
+                bgcolor: '#DFFF00',
+              },
+            }}>
+            <Typography fontSize={9} fontWeight={500} color="black">
+              CREATE REFERRAL CODE
+            </Typography>
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };
