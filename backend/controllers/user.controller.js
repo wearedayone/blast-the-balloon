@@ -14,3 +14,17 @@ export const addRefCode = async (req, res) => {
     return res.status(400).send(err.message);
   }
 };
+
+export const connectWallet = async (req, res) => {
+  try {
+    const { message, signature } = req.body;
+    await services.createUserRecord({
+      message,
+      signature,
+    });
+    return res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    return res.status(400).send(err.message);
+  }
+};
