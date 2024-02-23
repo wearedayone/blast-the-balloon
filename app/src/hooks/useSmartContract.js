@@ -55,12 +55,16 @@ const useSmartContract = ({ provider, checkNetwork, user }) => {
 
     const userId = await gameContract.pIDxAddr_(user?.address);
     await gameContract.buyPumpXID(Number(userId.toString()), inviterId, amount);
+
+    // TODO: implement backend listener to update gamePlay in firestore
   };
 
   const sell = async ({ amount }) => {
     await checkNetwork();
     const gameContract = getGameContract();
     await gameContract.sell(amount);
+
+    // TODO: implement backend listener to update gamePlay in firestore
   };
 
   return { createReferralCode, buy, sell };
