@@ -3,12 +3,19 @@ import { Box, Button, IconButton, Menu, Typography } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+import { useSnackbar } from 'notistack';
 
 import { customFormat } from '../../../utils/numbers';
+import useAppContext from '../../../hooks/useAppContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const {
+    smartContractState: { withdraw },
+  } = useAppContext();
+  const [loading, setLoading] = useState(false);
   const total = useMemo(() => referralReward + holderReward + lockedValue, [referralReward, holderReward, lockedValue]);
 
   const gap = useMemo(() => total * 0.01, [total]);
@@ -37,6 +44,20 @@ const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
 
       return referralSection || holderSection || lockedSection ? '#7c8e0b' : 'transparent';
     });
+
+  const submit = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      await withdraw();
+      enqueueSnackbar('Withdrawed successfully', { variant: 'success' });
+    } catch (err) {
+      console.error(err);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <Box position="relative" p={2}>
@@ -165,8 +186,9 @@ const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
             backgroundColor: '#DFFF00',
             color: '#12140D',
             '&:hover': { backgroundColor: '#c8e500' },
-          }}>
-          Withdraw
+          }}
+          onClick={submit}>
+          {loading ? 'Processing...' : 'Withdraw'}
         </Button>
       </Box>
     </Box>

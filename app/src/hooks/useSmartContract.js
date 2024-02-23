@@ -67,7 +67,15 @@ const useSmartContract = ({ provider, checkNetwork, user }) => {
     // TODO: implement backend listener to update gamePlay in firestore
   };
 
-  return { createReferralCode, buy, sell };
+  const withdraw = async () => {
+    await checkNetwork();
+    const gameContract = getGameContract();
+    await gameContract.withdraw();
+
+    // TODO: implement backend listener to update gamePlay in firestore
+  };
+
+  return { createReferralCode, buy, sell, withdraw };
 };
 
 export default useSmartContract;
