@@ -13,7 +13,7 @@ import Winner from './components/Winner';
 import useAppContext from '../../hooks/useAppContext';
 
 const App = () => {
-  const { userState, seasonState, leaderboardState, walletState } = useAppContext();
+  const { userState, seasonState, marketState, leaderboardState, walletState } = useAppContext();
   const [ended, setEnded] = useState(false);
 
   useEffect(() => {
@@ -77,7 +77,12 @@ const App = () => {
               <Box flex={1}>
                 <Referral refCode={userState?.user?.referralCode || ''} referrals={userState?.referralUsers || []} />
               </Box>
-              <Earnings referralReward={userState?.user?.referralReward} holderReward={userState?.user?.holderReward} />
+              <Earnings
+                referralReward={userState?.user?.referralReward}
+                holderReward={userState?.user?.holderReward}
+                address={walletState.address}
+                ethPriceInUsd={marketState.market?.ethPriceInUsd}
+              />
             </Box>
           </Grid>
           <Grid item xs={4}>

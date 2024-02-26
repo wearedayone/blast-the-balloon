@@ -1,3 +1,4 @@
+import axios from 'axios';
 import admin, { firestore } from '../configs/firebase.config.js';
 
 const main = async () => {
@@ -5,6 +6,8 @@ const main = async () => {
 
   // system
   await firestore.collection('system').doc('config').set({ activeSeasonId: seasonId });
+  const ethPriceRes = await axios.get('https://api.coinbase.com/v2/exchange-rates?currency=ETH');
+  await firestore.collection('system').doc('market').set({ ethPriceInUsd: ethPriceRes.data.data.rates.USD });
 
   // season
   const now = Date.now();
