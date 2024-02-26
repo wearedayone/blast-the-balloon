@@ -7,6 +7,7 @@ import { useSnackbar } from 'notistack';
 
 import CreateReferralCodeModal from './CreateReferralCodeModal';
 import useAppContext from '../../../hooks/useAppContext';
+import { customFormat } from '../../../utils/numbers';
 
 const Referral = ({ referrals, refCode }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -32,6 +33,8 @@ const Referral = ({ referrals, refCode }) => {
     setLoading(false);
   };
 
+  console.log({ referrals });
+
   return (
     <Box display="flex" flexDirection="column">
       <CreateReferralCodeModal open={open} onClose={() => setOpen(false)} />
@@ -40,7 +43,9 @@ const Referral = ({ referrals, refCode }) => {
         <Box position="absolute" top={0} left={0} width="100%" height="100%" display="flex" flexDirection="column">
           <Box height="13%" display="flex" alignItems="center" gap={2}>
             <Box width="40%" pl="9%" display="flex" alignItems="center" justifyContent="center">
-              <Typography fontSize={12}>REFERRALS ({referrals.length})</Typography>
+              <Typography fontFamily="'Palanquin Dark', sans-serif" fontSize={12}>
+                REFERRALS ({referrals.length})
+              </Typography>
               <KeyboardArrowDownIcon sx={{ fontSize: 16 }} />
             </Box>
             <Box
@@ -65,85 +70,82 @@ const Referral = ({ referrals, refCode }) => {
               <SendIcon sx={{ fontSize: 14, color: 'black', cursor: 'pointer' }} onClick={submit} />
             </Box>
           </Box>
+          <Box>
+            <Grid container>
+              <Grid item xs={5}>
+                <Box>
+                  <Typography fontSize={12} fontFamily="Oswald" color="white" align="center">
+                    NAME
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={3}>
+                <Box>
+                  <Typography fontSize={12} fontFamily="Oswald" color="white" align="center">
+                    NODES
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={4}>
+                <Box>
+                  <Typography fontSize={12} fontFamily="Oswald" color="white" align="center">
+                    PROFIT
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
           <Box flex={1} pb={1} display="flex" flexDirection="column" overflow="auto">
             <Box pt={0.5} px={1} pb={1} flex={1} overflow="auto" display="flex" flexDirection="column" gap={0.5}>
-              {referrals.map((item) => (
-                <Box
-                  key={item.id}
-                  height="45px"
-                  display="flex"
-                  alignItems="center"
-                  p={0.5}
-                  sx={{
-                    background: 'linear-gradient(90deg, #979000 0%, rgba(151, 144, 0, 0) 100%)',
-                  }}>
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <Box height="100%" display="flex" alignItems="center" gap={0.5}>
-                        <Box
-                          height="40px"
-                          sx={{
-                            aspectRatio: '1/1',
-                            '& img': {
-                              width: '100%',
-                              height: '100%',
-                              display: 'block',
-                              objectPosition: 'center',
-                              objectFit: 'cover',
-                              border: '1px solid #12140D',
-                            },
-                          }}>
-                          <img src={item.avatarURL} alt="avatar" />
-                        </Box>
-                        <Box height="100%" display="flex" flexDirection="column" justifyContent="center">
-                          <Typography fontSize={8} fontWeight={200} color="#DFFF00" lineHeight="8px">
-                            Name
-                          </Typography>
-                          <Typography color="#DFFF00" lineHeight="14px">
-                            {item.username}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Box height="100%" display="flex" flexDirection="column" justifyContent="center">
-                        <Typography fontSize={8} fontWeight={200} color="#DFFF00" lineHeight="8px" align="center">
-                          Nodes
-                        </Typography>
-                        <Typography color="#DFFF00" lineHeight="14px" align="center">
-                          {item.numberOfPump}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Box height="100%" display="flex" flexDirection="column" justifyContent="center">
-                        <Typography fontSize={8} fontWeight={200} color="#DFFF00" lineHeight="8px" align="center">
-                          Profit
-                        </Typography>
-                        <Box display="flex" justifyContent="center">
-                          <Typography color="#DFFF00" lineHeight="14px" align="center">
-                            {item.profit}
-                          </Typography>
-                          <Typography fontSize={10} color="#DFFF00" align="center" sx={{ alignSelf: 'flex-end' }}>
-                            ETH
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </Box>
-              ))}
+              {!!referrals.length &&
+                Array(20)
+                  .fill(referrals[0])
+                  .map((item) => (
+                    <Box
+                      key={item.id}
+                      height="45px"
+                      display="flex"
+                      alignItems="center"
+                      p={0.5}
+                      sx={{
+                        background: 'linear-gradient(90deg, #979000 0%, rgba(151, 144, 0, 0) 100%)',
+                      }}>
+                      <Grid container>
+                        <Grid item xs={5}>
+                          <Box>
+                            <Typography fontSize={15} color="white" align="center">
+                              {item.username}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Box>
+                            <Typography fontSize={15} color="white" align="center">
+                              {item.numberOfPump}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Box>
+                            <Typography fontSize={15} color="white" align="center">
+                              {customFormat(item.profit, 5)} ETH
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  ))}
             </Box>
           </Box>
         </Box>
       </Box>
       {refCode ? (
-        <Box display="flex" alignItems="center" gap={1}>
-          <Box px={1} py={0.5} bgcolor="#DFFF00" display="flex" alignItems="center" gap={0.5}>
-            <Typography fontSize={9} fontWeight={500}>
+        <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
+          <Box px={1} py={0.5} bgcolor="white" display="flex" alignItems="center" gap={0.5}>
+            <Typography fontSize={12} fontWeight={500} color="#12140D">
               REF CODE:
             </Typography>
-            <Typography fontSize={8} color="#12140D">
+            <Typography fontSize={12} color="#12140D">
               uponly.gg/{refCode}
             </Typography>
             <ContentCopyIcon
@@ -151,30 +153,33 @@ const Referral = ({ referrals, refCode }) => {
               onClick={() => navigator.clipboard.writeText(refCode)}
             />
           </Box>
-          <Typography fontSize={11} color="#DFFF00">
+          <Typography fontSize={12} fontFamily="Oxygen, sans-serif" color="#DFFF00">
             Earn 10% On All Purchase
           </Typography>
         </Box>
       ) : (
-        <Box>
+        <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
           <Button
             sx={{
               px: 1,
               py: 0.5,
-              bgcolor: '#DFFF00',
+              bgcolor: 'white',
               borderRadius: 0,
               '&:active': {
-                bgcolor: '#DFFF00',
+                bgcolor: 'white',
               },
               '&:hover': {
-                bgcolor: '#DFFF00',
+                bgcolor: 'white',
               },
             }}
             onClick={() => setOpen(true)}>
-            <Typography fontSize={9} fontWeight={500} color="black">
+            <Typography fontSize={12} fontWeight={500} color="#12140D">
               CREATE REFERRAL CODE
             </Typography>
           </Button>
+          <Typography fontSize={12} fontFamily="Oxygen, sans-serif" color="#DFFF00">
+            Earn 10% On All Purchase
+          </Typography>
         </Box>
       )}
     </Box>

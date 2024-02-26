@@ -69,7 +69,7 @@ const Timer = ({ endTime, ended, setEnded }) => {
           gap={1}>
           <Typography
             fontSize={22}
-            fontFamily="Palanquin Dark, sans-serif"
+            fontFamily="'Palanquin Dark', sans-serif"
             color={ended ? '#F0FF92' : '#979000'}
             align="center"
             lineHeight="18px">
