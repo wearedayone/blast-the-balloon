@@ -1,17 +1,15 @@
-import { useState } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from '@ethersproject/contracts';
 import { formatBytes32String } from '@ethersproject/strings';
-import { useSnackbar } from 'notistack';
+import { parseEther } from '@ethersproject/units';
 
 import environments from '../utils/environments';
+import { calculateNextPumpBuyPriceBatch } from '../utils/formulas';
 import Game from '../assets/abis/Game.json';
 
 const { GAME_ADDRESS } = environments;
 
-const useSmartContract = ({ provider, checkNetwork, user }) => {
-  const { enqueueSnackbar } = useSnackbar();
-
+const useSmartContract = ({ provider, checkNetwork, user, season }) => {
   const getSigner = () => {
     if (!provider) return null;
 
@@ -45,6 +43,10 @@ const useSmartContract = ({ provider, checkNetwork, user }) => {
   };
 
   const buy = async ({ amount }) => {
+    if (!season) return;
+    const { pumpBought, pumpSold, pumpPrice } = season;
+    const total = calculateNextPumpBuyPriceBatch(pumpPrice.basePrice, pumpPrice.k, pumpBought - pumpSold, amount);
+
     await checkNetwork();
     const gameContract = getGameContract();
 
@@ -54,7 +56,19 @@ const useSmartContract = ({ provider, checkNetwork, user }) => {
     }
 
     const userId = await gameContract.pIDxAddr_(user?.address);
-    await gameContract.buyPumpXID(Number(userId.toString()), inviterId, amount);
+    console.log({
+      userId: Number(userId.toString()),
+      inviterId,
+      amount,
+      value: parseEther(`${total}`),
+    });
+    const tx = await gameContract.buyPumpXID(Number(userId.toString()), inviterId, amount, {
+      value: parseEther(`${total}`),
+    });
+    const receipt = await tx.wait();
+
+    console.log({ receipt });
+    if (receipt.status !== 1) throw new Error('Something wrong');
 
     // TODO: implement backend listener to update gamePlay in firestore
   };

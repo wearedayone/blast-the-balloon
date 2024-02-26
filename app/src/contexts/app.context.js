@@ -26,6 +26,7 @@ export const AppContextProvider = ({ children }) => {
     provider: walletState.provider,
     checkNetwork: walletState.checkNetwork,
     user: userState.user,
+    season: seasonState.season,
   });
 
   return (

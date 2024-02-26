@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 import useAppContext from '../../../hooks/useAppContext';
+import { customFormat } from '../../../utils/numbers';
+import { calculateNextPumpBuyPriceBatch, calculateNextPumpSellPriceBatch } from '../../../utils/formulas';
 
 const MainButton = () => {
   const {
     userState: { gamePlay },
     smartContractState: { buy, sell },
+    seasonState: { season },
   } = useAppContext();
   const [mode, setMode] = useState('buy');
   const [confirming, setConfirming] = useState(true);
@@ -36,6 +39,18 @@ const MainButton = () => {
   const canIncrease = quantity < max;
   const decrease = () => canDecrease && setQuantity(quantity - 1);
   const increase = () => canIncrease && setQuantity(quantity + 1);
+
+  const totalPrice = useMemo(() => {
+    if (!quantity || !season) return 0;
+
+    const { pumpBought, pumpSold, pumpPrice, buyConfig } = season;
+    const n = pumpBought - pumpSold;
+    const total =
+      mode === 'buy'
+        ? calculateNextPumpBuyPriceBatch(pumpPrice.basePrice, pumpPrice.k, n, quantity)
+        : calculateNextPumpSellPriceBatch(pumpPrice.basePrice, pumpPrice.k, n, quantity, buyConfig.prizePool);
+    return total;
+  }, [season, quantity, mode]);
 
   useEffect(() => {
     setQuantity(mode === 'buy' ? 1 : 0);
@@ -122,7 +137,7 @@ const MainButton = () => {
         </Box>
         <Box px={4} py={0.5} display="flex" alignItems="center" justifyContent="center" bgcolor="#DFFF00">
           <Typography fontSize={12} align="center" color="#12140D">
-            PRICE: ETH
+            PRICE: {customFormat(totalPrice, 5)} ETH
           </Typography>
         </Box>
         <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
