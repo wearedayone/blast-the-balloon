@@ -5,6 +5,7 @@ const tabs = [
   { id: 'pumpers', title: 'TOP PUMPERS' },
   { id: 'last-purchase', title: 'LAST PURCHASE' },
 ];
+const WIDTH = 450;
 const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }) => {
   const [tab, setTab] = useState('pumpers');
 
@@ -25,13 +26,17 @@ const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }
       pl={5}
       pr={6}
       pb={1}
-      width={400}
+      width={WIDTH}
       display="flex"
       flexDirection="column"
       gap={0.5}
-      sx={{ aspectRatio: '473/670', backgroundImage: 'url(/images/leaderboard-frame.png)', backgroundSize: 'contain' }}>
-      <Box bgcolor="#DFFF00" p={1}>
-        <Typography color="#12140D" align="center">
+      sx={{
+        aspectRatio: '949/1340',
+        backgroundImage: 'url(/images/leaderboard-frame.png)',
+        backgroundSize: 'contain',
+      }}>
+      <Box pt={`${WIDTH * 0.04}px`} pb={`${WIDTH * 0.02}px`}>
+        <Typography fontSize={18} color="#979000" align="center">
           LEADERBOARD
         </Typography>
       </Box>
@@ -40,29 +45,56 @@ const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }
           <Box
             key={item.id}
             px={2}
-            pt={0.75}
-            pb={1.25}
+            py={0.75}
             flex={1}
             sx={{
               cursor: 'pointer',
-              backgroundImage:
-                tab === item.id
-                  ? 'linear-gradient(0deg, #DFFF00 -25%, rgba(223, 255, 0, 0) 100%)'
-                  : 'linear-gradient(0deg, #979000 -185%, rgba(151, 144, 0, 0) 100%);',
+              backgroundColor: tab === item.id ? '#DFFF00' : '#979000',
             }}
             onClick={() => setTab(item.id)}>
-            <Typography fontSize={13} color={tab === item.id ? '#DFFF00' : '#979000'} align="center">
+            <Typography fontSize={13} color="#12140D" align="center">
               {item.title}
             </Typography>
           </Box>
         ))}
-        <Box position="absolute" sx={{ bottom: 10 }}>
-          <TableHeader title="Name" sx={{ left: 50 }} />
-          <TableHeader title="Nodes" sx={{ left: 137 }} />
-          <TableHeader title="Profit" sx={{ left: 240 }} />
-        </Box>
       </Box>
-      <Box sx={{ overflowY: 'scroll', height: 375 }}>
+      <Box sx={{ position: 'relative', height: 14 }}>
+        <Typography
+          color="#DFFF00"
+          fontSize={7}
+          align="center"
+          lineHeight={2}
+          textTransform="uppercase"
+          sx={{ position: 'absolute', left: 60 }}>
+          Name
+        </Typography>
+        <Typography
+          color="#DFFF00"
+          fontSize={7}
+          align="center"
+          lineHeight={2}
+          textTransform="uppercase"
+          sx={{ position: 'absolute', left: 146 }}>
+          Nodes
+        </Typography>
+        <Typography
+          color="#DFFF00"
+          fontSize={7}
+          align="center"
+          lineHeight={2}
+          textTransform="uppercase"
+          sx={{ position: 'absolute', left: 256 }}>
+          Profit
+        </Typography>
+      </Box>
+      <Box
+        mx={-0.5}
+        px={0.5}
+        sx={{
+          overflowY: 'scroll',
+          height: WIDTH * 0.93,
+          backgroundImage: 'linear-gradient(0deg, #191B11 0%, rgba(25, 27, 17, 0) 100%)',
+        }}>
         {data.map((gamePlay, index) => (
           <Grid
             container
@@ -111,22 +143,5 @@ const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }
     </Box>
   );
 };
-
-const TableHeader = ({ title, sx }) => (
-  <Box
-    sx={{
-      position: 'absolute',
-      width: 40,
-      borderBottom: '12px solid #1b1f1d',
-      borderLeft: '5px solid transparent',
-      borderRight: '5px solid transparent',
-      height: 0,
-      ...sx,
-    }}>
-    <Typography color="#979000" fontSize={7} align="center" lineHeight={2} textTransform="uppercase">
-      {title}
-    </Typography>
-  </Box>
-);
 
 export default Leaderboard;
