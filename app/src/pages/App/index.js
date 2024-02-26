@@ -106,10 +106,9 @@ const App = () => {
               justifyContent="space-between"
               alignItems="flex-end">
               <UserInfo
-                username={userState?.user?.username || ''}
-                avatarURL={userState?.user?.avatarURL}
                 address={walletState.address}
                 numberOfPump={userState?.gamePlay?.numberOfPump || 0}
+                disconnect={walletState.logout}
               />
               <Leaderboard
                 leaderboardData={leaderboardState.gamePlays}
