@@ -8,6 +8,8 @@ import { useSnackbar } from 'notistack';
 import { customFormat } from '../../../utils/numbers';
 import useAppContext from '../../../hooks/useAppContext';
 
+const isBigScreen = window.screen.height > 1000;
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), address, ethPriceInUsd }) => {
@@ -41,7 +43,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), a
     });
 
   return (
-    <Box position="relative" p={2}>
+    <Box position="relative" p={2} sx={{ '& canvas': { width: '30vh !important', height: '30vh !important' } }}>
       <Doughnut
         data={{
           labels: ['Referral', "Holder's", 'Locked'],
@@ -95,7 +97,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), a
           ],
         }}
         options={{
-          cutout: '55%',
+          cutout: isBigScreen ? '55%' : 75,
           plugins: {
             legend: { display: false },
             tooltip: { enabled: false },
@@ -103,7 +105,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), a
         }}
       />
       <Doughnut
-        style={{ position: 'absolute', top: '5%', left: '5%' }}
+        style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
         data={{
           labels: ['Referral', '', "Holder's", '', 'Locked'],
           datasets: [
@@ -129,7 +131,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), a
           ],
         }}
         options={{
-          cutout: '50%',
+          cutout: isBigScreen ? '50%' : 70,
           plugins: {
             legend: { display: false },
             tooltip: {
@@ -301,7 +303,7 @@ const Withdraw = ({ address, total, ethPriceInUsd }) => {
           <Typography className="withdraw-info-content" color="white" fontWeight={500} textTransform="uppercase">
             WITHDRAW YOUR FUNDS
           </Typography>
-          <Typography className="withdraw-info-content" fontSize={8} color="#DFFF00">
+          <Typography className="withdraw-info-content" fontSize={12} color="#DFFF00">
             YOUR WALLET
           </Typography>
           <Box bgcolor="#DFFF00" p={0.5} mb={1}>
@@ -326,7 +328,7 @@ const Withdraw = ({ address, total, ethPriceInUsd }) => {
             fontWeight={500}
             textTransform="uppercase">
             You will receive:{' '}
-            <span style={{ fontFamily: 'Oswald', fontSize: 8, color: '#DFFF00' }}>
+            <span style={{ fontFamily: 'Oswald', color: '#DFFF00' }}>
               {customFormat(ethPriceInUsd * total, 1)} DOLLARS ({customFormat(total, 3)}ETH){' '}
             </span>
           </Typography>
