@@ -34,11 +34,17 @@ const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }
       display="flex"
       flexDirection="column"
       gap={0.5}
+      position="relative"
       sx={{
         aspectRatio: '949/1340',
         backgroundImage: 'url(/images/leaderboard-frame.png)',
         backgroundSize: 'contain',
       }}>
+      <img
+        src="/images/benefits.svg"
+        alt=""
+        style={{ position: 'absolute', bottom: 0, left: 0, transform: 'translateX(-105%)' }}
+      />
       <Box pb={`${WIDTH * 0.01}px`}>
         <Typography fontSize={18} sx={{ mr: 1 }} color="white" align="center">
           LEADERBOARD
