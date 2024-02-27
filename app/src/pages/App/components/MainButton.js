@@ -14,7 +14,7 @@ const MainButton = () => {
     seasonState: { season },
   } = useAppContext();
   const [mode, setMode] = useState('buy');
-  const [confirming, setConfirming] = useState(true);
+  const [confirming, setConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -70,29 +70,6 @@ const MainButton = () => {
   };
 
   if (confirmed) {
-    if (mode === 'buy') {
-      return (
-        <Box
-          width="240px"
-          height="50px"
-          borderRadius="90px"
-          bgcolor="#DFFF00"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ cursor: 'pointer' }}
-          onClick={() => {
-            setConfirmed(false);
-            setConfirming(false);
-            setQuantity(1);
-          }}>
-          <Typography fontSize={25} fontWeight={700} fontFamily="Oxygen, sans-serif" color="#2A2A2A" align="center">
-            Confirmed
-          </Typography>
-        </Box>
-      );
-    }
-
     return (
       <Box
         width="240px"
@@ -116,56 +93,79 @@ const MainButton = () => {
 
   if (confirming) {
     return (
-      <Box display="flex" flexDirection="column" gap={1}>
-        <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
-          <RemoveCircleOutlineIcon
-            sx={{ color: '#DFFF00', cursor: canDecrease ? 'pointer' : 'default', opacity: canDecrease ? 1 : 0.5 }}
-            onClick={decrease}
-          />
-          <Box px={2} py={0.5} bgcolor="#DFFF00" display="flex" flexDirection="column" gap={1}>
-            <Typography fontSize={35} fontWeight={500} align="center" lineHeight="30px">
-              {quantity}
+      <Box position="relative">
+        <img src="/images/action-container.png" alt="container" />
+        {mode === 'sell' && (
+          <Box
+            position="absolute"
+            top={0}
+            left={0}
+            width="100%"
+            sx={{ transform: 'translate(20px, calc(-100% + 5px))' }}>
+            <Typography fontSize={20} align="center" color="#DFFF00" lineHeight="20px">
+              ARE YOU SURE?
             </Typography>
-            <Typography fontSize={20} align="center" lineHeight="20px">
-              PUMP
+            <Typography fontSize={14} fontWeight={300} fontFamily="Oswald, sans-serif" align="center" color="white">
+              Sales are subject to 40% tax !
             </Typography>
           </Box>
-          <AddCircleOutlineIcon
-            sx={{ color: '#DFFF00', cursor: canIncrease ? 'pointer' : 'default', opacity: canIncrease ? 1 : 0.5 }}
-            onClick={increase}
-          />
-        </Box>
-        <Box px={4} py={0.5} display="flex" alignItems="center" justifyContent="center" bgcolor="#DFFF00">
-          <Typography fontSize={12} align="center" color="#12140D">
-            PRICE: {customFormat(totalPrice, 5)} ETH
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
-          <Box
-            position="relative"
-            width={mode === 'buy' ? '55px' : '28px'}
-            borderRadius="50%"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ aspectRatio: '1/1', cursor: 'pointer', ...buyBtnStyle }}
-            onClick={() => (mode !== 'buy' ? setMode('buy') : makeTxn())}>
-            <Typography fontSize={mode === 'buy' ? 17 : 9} fontWeight={600}>
-              BUY
+        )}
+        <Box position="absolute" top={0} left={0} width="100%" height="100%" px={2} py={1}>
+          <Box display="flex" flexDirection="column" gap={1.25}>
+            <Typography fontSize={17} fontWeight={600} align="center" color="white">
+              {mode === 'buy' ? 'BUY' : 'SELL'} PUMPS
             </Typography>
-          </Box>
-          <Box
-            position="relative"
-            width={mode === 'sell' ? '55px' : '28px'}
-            borderRadius="50%"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ aspectRatio: '1/1', cursor: 'pointer', ...sellBtnStyle }}
-            onClick={() => (mode !== 'sell' ? setMode('sell') : makeTxn())}>
-            <Typography fontSize={mode === 'sell' ? 17 : 9} fontWeight={600}>
-              SELL
-            </Typography>
+            <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+              <RemoveCircleOutlineIcon
+                sx={{ color: '#DFFF00', cursor: canDecrease ? 'pointer' : 'default', opacity: canDecrease ? 1 : 0.5 }}
+                onClick={decrease}
+              />
+              <Box
+                height="32px"
+                width="84px"
+                px={2}
+                pb={1}
+                bgcolor="#DFFF00"
+                display="flex"
+                justifyContent="center"
+                flexDirection="column"
+                gap={1}>
+                <Typography fontSize={35} fontWeight={500} align="center">
+                  {quantity}
+                </Typography>
+              </Box>
+              <AddCircleOutlineIcon
+                sx={{ color: '#DFFF00', cursor: canIncrease ? 'pointer' : 'default', opacity: canIncrease ? 1 : 0.5 }}
+                onClick={increase}
+              />
+            </Box>
+            <Box display="flex" justifyContent="center">
+              <Box width="70%" py={0.5} display="flex" alignItems="center" justifyContent="center" bgcolor="#DFFF00">
+                <Typography
+                  fontSize={12}
+                  fontWeight={700}
+                  fontFamily="Oxygen, sans-serif"
+                  align="center"
+                  color="#12140D">
+                  PRICE: {customFormat(totalPrice, 5)} ETH
+                </Typography>
+              </Box>
+            </Box>
+            <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+              <Box
+                position="relative"
+                width="55px"
+                borderRadius="50%"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                sx={{ aspectRatio: '1/1', cursor: 'pointer', ...(mode === 'buy' ? buyBtnStyle : sellBtnStyle) }}
+                onClick={makeTxn}>
+                <Typography fontSize={17} fontWeight={600}>
+                  {mode === 'buy' ? 'BUY' : 'SELL'}
+                </Typography>
+              </Box>
+            </Box>
           </Box>
         </Box>
       </Box>
