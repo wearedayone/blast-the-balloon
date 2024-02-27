@@ -3,6 +3,7 @@ import { Box, Grid } from '@mui/material';
 
 import Balloon from './components/Balloon';
 import Earnings from './components/Earnings';
+import LastPurchase from './components/LastPurchase';
 import Leaderboard from './components/Leaderboard';
 import Logo from './components/Logo';
 import MainButton from './components/MainButton';
@@ -114,6 +115,13 @@ const App = () => {
                 address={walletState.address}
                 numberOfPump={userState?.gamePlay?.numberOfPump || 0}
                 disconnect={walletState.logout}
+              />
+              <LastPurchase
+                season={seasonState.season}
+                address={walletState.address}
+                numberOfPump={userState?.gamePlay?.numberOfPump || 0}
+                disconnect={walletState.logout}
+                latestPurchase={leaderboardState.gamePlays.sort((a, b) => b.lastPurchaseTime - a.lastPurchaseTime)[0]}
               />
               <Leaderboard
                 leaderboardData={leaderboardState.gamePlays}
