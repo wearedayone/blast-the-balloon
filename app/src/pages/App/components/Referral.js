@@ -33,11 +33,8 @@ const Referral = ({ referrals, refCode }) => {
     setLoading(false);
   };
 
-  console.log({ referrals });
-
   return (
     <Box display="flex" flexDirection="column">
-      <CreateReferralCodeModal open={open} onClose={() => setOpen(false)} />
       <Box position="relative">
         <img src="/images/ref-container.png" alt="ref-container" />
         <Box position="absolute" top={0} left={0} width="100%" height="100%" display="flex" flexDirection="column">
@@ -98,43 +95,41 @@ const Referral = ({ referrals, refCode }) => {
           <Box flex={1} pb={1} display="flex" flexDirection="column" overflow="auto">
             <Box pt={0.5} px={1} pb={1} flex={1} overflow="auto" display="flex" flexDirection="column" gap={0.5}>
               {!!referrals.length &&
-                Array(20)
-                  .fill(referrals[0])
-                  .map((item) => (
-                    <Box
-                      key={item.id}
-                      height="45px"
-                      display="flex"
-                      alignItems="center"
-                      p={0.5}
-                      sx={{
-                        background: 'linear-gradient(90deg, #979000 0%, rgba(151, 144, 0, 0) 100%)',
-                      }}>
-                      <Grid container>
-                        <Grid item xs={5}>
-                          <Box>
-                            <Typography fontSize={15} color="white" align="center">
-                              {item.username}
-                            </Typography>
-                          </Box>
-                        </Grid>
-                        <Grid item xs={3}>
-                          <Box>
-                            <Typography fontSize={15} color="white" align="center">
-                              {item.numberOfPump}
-                            </Typography>
-                          </Box>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Box>
-                            <Typography fontSize={15} color="white" align="center">
-                              {customFormat(item.profit, 5)} ETH
-                            </Typography>
-                          </Box>
-                        </Grid>
+                referrals.map((item) => (
+                  <Box
+                    key={item.id}
+                    height="45px"
+                    display="flex"
+                    alignItems="center"
+                    p={0.5}
+                    sx={{
+                      background: 'linear-gradient(90deg, #979000 0%, rgba(151, 144, 0, 0) 100%)',
+                    }}>
+                    <Grid container>
+                      <Grid item xs={5}>
+                        <Box>
+                          <Typography fontSize={15} color="white" align="center">
+                            {item.username}
+                          </Typography>
+                        </Box>
                       </Grid>
-                    </Box>
-                  ))}
+                      <Grid item xs={3}>
+                        <Box>
+                          <Typography fontSize={15} color="white" align="center">
+                            {item.numberOfPump}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Box>
+                          <Typography fontSize={15} color="white" align="center">
+                            {customFormat(item.profit, 5)} ETH
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                ))}
             </Box>
           </Box>
         </Box>
@@ -158,7 +153,12 @@ const Referral = ({ referrals, refCode }) => {
           </Typography>
         </Box>
       ) : (
-        <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
+        <Box
+          position="relative"
+          display="flex"
+          alignItems={open ? 'flex-start' : 'center'}
+          justifyContent="space-between"
+          gap={1}>
           <Button
             sx={{
               px: 1,
@@ -172,14 +172,18 @@ const Referral = ({ referrals, refCode }) => {
                 bgcolor: 'white',
               },
             }}
-            onClick={() => setOpen(true)}>
+            onClick={() => setOpen(!open)}>
             <Typography fontSize={12} fontWeight={500} color="#12140D">
               CREATE REFERRAL CODE
             </Typography>
           </Button>
-          <Typography fontSize={12} fontFamily="Oxygen, sans-serif" color="#DFFF00">
-            Earn 10% On All Purchase
-          </Typography>
+          {open ? (
+            <CreateReferralCodeModal onClose={() => setOpen(false)} />
+          ) : (
+            <Typography fontSize={12} fontFamily="Oxygen, sans-serif" color="#DFFF00">
+              Earn 10% On All Purchase
+            </Typography>
+          )}
         </Box>
       )}
     </Box>

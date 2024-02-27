@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Dialog, Box, Typography, Button, alpha } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
 import useAppContext from '../../../hooks/useAppContext';
 
-const CreateReferralCodeModal = ({ open, onClose }) => {
+const CreateReferralCodeModal = ({ onClose }) => {
   const { enqueueSnackbar } = useSnackbar();
   const {
     userState,
@@ -47,66 +47,80 @@ const CreateReferralCodeModal = ({ open, onClose }) => {
   }, [userState.user?.inviteCode, userState.user?.username, userState.user?.referralCode]);
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Box flex={1} position="absolute" bottom={0} left="45%" sx={{ transform: 'translateY(calc(100% - 25px))' }}>
+      <img src="/images/create-referral-container.png" alt="container" />
       <Box
-        p={2}
+        position="absolute"
+        p={1}
+        top={0}
+        left={0}
+        width="100%"
+        height="100%"
         display="flex"
+        flexDirection="column"
+        jsutifyContent="center"
         gap={1}
-        bgcolor="black"
         sx={{
-          // background:
-          //   'linear-gradient(0deg, rgba(90,0,255,1) 0%, rgba(0,0,0,1) 0%, rgba(68,77,14,1) 5%, rgba(226,255,45,1) 100%, rgba(255,148,252,1) 100%)',
           '& input': {
-            bgcolor: 'transparent',
-            px: 2,
-            py: 1,
-            border: '1px solid #F0FF92',
-            borderRadius: 1,
-            outline: 'none',
-            height: 34,
             minWidth: 0,
-            color: '#F0FF92',
+            width: '120px',
+            border: 'none',
+            outline: 'none',
+            bgcolor: 'transparent',
+            borderBottom: '2px solid white',
+            color: 'white',
           },
         }}>
-        <Box width="35%" display="flex" flexDirection="column" justifyContent="flex-end" gap={1}>
-          <Typography color="#F0FF92">Your username</Typography>
+        <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
+          <Typography fontSize={12} fontWeight={500} color="white">
+            ENTER YOUR USERNAME
+          </Typography>
           <input
             value={data.username}
             onChange={(e) => updateData({ username: e.target.value.trim() })}
             placeholder="Username"
           />
         </Box>
-        <Box width="35%" display="flex" flexDirection="column" justifyContent="flex-end" gap={1}>
-          <Typography color="#F0FF92">Your referral code</Typography>
+        <Box display="flex" alignItems="center" justifyContent="space-between" gap={1}>
+          <Typography fontSize={12} fontWeight={500} color="white">
+            ENTER YOUR CODE
+          </Typography>
           <input
             value={data.referralCode}
             onChange={(e) => updateData({ referralCode: e.target.value.trim() })}
             placeholder="Referral code"
           />
         </Box>
-        <Box flex={1} display="flex" flexDirection="column" justifyContent="flex-end" gap={1}>
+        <Box display="flex" justifyContent="center">
           <Button
-            variant="outlined"
-            sx={{
-              height: 34,
-              color: '#F0FF92',
-              borderColor: '#F0FF92',
-              boxShadow: 'none',
-              '&:hover': {
-                boxShadow: 'none',
-                borderColor: '#F0FF92',
-                bgcolor: alpha('#F0FF92', 0.4),
-              },
-              '&:active': { boxShadow: 'none', borderColor: '#F0FF92' },
-              '&:disabled': { color: '#F0FF92', borderColor: '#F0FF92', opacity: 0.4 },
-            }}
             disabled={loading || !data.username.trim() || !data.referralCode.trim()}
+            sx={{
+              width: '85px',
+              height: '20px',
+              bgcolor: '#979000',
+              outline: 'none',
+              border: 'none',
+              boxShadow: 'none',
+              fontSize: 10,
+              fontWeight: 700,
+              fontFamily: 'Oswald, sans-serif',
+              color: '#43411C',
+              '&:active': {
+                bgcolor: '#979000',
+              },
+              '&:focus': {
+                bgcolor: '#979000',
+              },
+              '&:disabled': {
+                opacity: 0.5,
+              },
+            }}
             onClick={submit}>
             {loading ? 'Loading...' : 'Create'}
           </Button>
         </Box>
       </Box>
-    </Dialog>
+    </Box>
   );
 };
 
