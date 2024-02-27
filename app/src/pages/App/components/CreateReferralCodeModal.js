@@ -47,15 +47,18 @@ const CreateReferralCodeModal = ({ onClose }) => {
   }, [userState.user?.inviteCode, userState.user?.username, userState.user?.referralCode]);
 
   return (
-    <Box flex={1} position="absolute" bottom={0} left="45%" sx={{ transform: 'translateY(calc(100% - 25px))' }}>
-      <img src="/images/create-referral-container.png" alt="container" />
+    <Box
+      flex={1}
+      position="absolute"
+      bottom={0}
+      left="45%"
+      width="290px"
+      sx={{
+        transform: 'translateY(calc(100% - 25px))',
+        background: 'linear-gradient(180deg, #979000 0%, rgba(151, 144, 0, 0) 100%)',
+      }}>
       <Box
-        position="absolute"
         p={1}
-        top={0}
-        left={0}
-        width="100%"
-        height="100%"
         display="flex"
         flexDirection="column"
         jsutifyContent="center"

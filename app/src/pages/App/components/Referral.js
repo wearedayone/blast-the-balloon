@@ -12,6 +12,7 @@ import { customFormat } from '../../../utils/numbers';
 const Referral = ({ referrals, refCode }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
+  const [openInstruction, setOpenInstruction] = useState(false);
   const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
   const {
@@ -37,6 +38,27 @@ const Referral = ({ referrals, refCode }) => {
     <Box display="flex" flexDirection="column">
       <Box position="relative">
         <img src="/images/ref-container.png" alt="ref-container" />
+        <Box position="absolute" top="-20px" left="100%" sx={{ '& img': { cursor: 'pointer' } }}>
+          <img src="/images/info-btn.png" alt="info" onClick={() => setOpenInstruction(!openInstruction)} />
+        </Box>
+        {openInstruction && (
+          <Box
+            position="absolute"
+            top="-20px"
+            left="calc(100% + 20px)"
+            p={1}
+            width="288px"
+            sx={{ background: 'linear-gradient(180deg, #979000 0%, rgba(151, 144, 0, 0) 100%)' }}>
+            <Typography fontSize={13} fontWeight={500} fontFamily="Oswald, sans-serif" color="white">
+              REFERRAL
+            </Typography>
+            <Typography fontSize={12} fontWeight={200} fontFamily="Oswald, sans-serif" color="white">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+              ea commodo consequat
+            </Typography>
+          </Box>
+        )}
         <Box position="absolute" top={0} left={0} width="100%" height="100%" display="flex" flexDirection="column">
           <Box height="13%" display="flex" alignItems="center" gap={2}>
             <Box width="40%" pl="9%" display="flex" alignItems="center" justifyContent="center">

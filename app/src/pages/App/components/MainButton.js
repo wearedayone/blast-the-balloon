@@ -18,6 +18,7 @@ const MainButton = () => {
   const [confirmed, setConfirmed] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [openInstruction, setOpenInstruction] = useState(false);
 
   const toggleMode = () => setMode(mode === 'buy' ? 'sell' : 'buy');
 
@@ -95,6 +96,16 @@ const MainButton = () => {
     return (
       <Box position="relative">
         <img src="/images/action-container.png" alt="container" />
+        <Box position="absolute" top="-20px" left="calc(100% + 10px)" sx={{ '& img': { cursor: 'pointer' } }}>
+          <img
+            src="/images/info-btn.png"
+            alt="info"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenInstruction(!openInstruction);
+            }}
+          />
+        </Box>
         {mode === 'sell' && (
           <Box
             position="absolute"
@@ -183,6 +194,16 @@ const MainButton = () => {
         justifyContent="center"
         sx={{ aspectRatio: '1/1', cursor: 'pointer', ...mainBtnStyle }}
         onClick={() => setConfirming(true)}>
+        <Box position="absolute" top="-20px" left="100%" sx={{ '& img': { cursor: 'pointer' } }}>
+          <img
+            src="/images/info-btn.png"
+            alt="info"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenInstruction(!openInstruction);
+            }}
+          />
+        </Box>
         <Typography fontSize={40} fontWeight={600}>
           {mainBtnText}
         </Typography>
