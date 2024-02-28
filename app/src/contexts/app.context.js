@@ -1,7 +1,9 @@
 import { createContext } from 'react';
 
 import useWallet from '../hooks/useWallet';
+import useSmartContract from '../hooks/useSmartContract';
 import useSeason from '../hooks/useSeason';
+import useMarket from '../hooks/useMarket';
 import useUserData from '../hooks/useUserData';
 import useLeaderboard from '../hooks/useLeaderboard';
 
@@ -10,6 +12,7 @@ export const AppContext = createContext();
 export const AppContextProvider = ({ children }) => {
   const walletState = useWallet();
   const seasonState = useSeason();
+  const marketState = useMarket();
   const userState = useUserData({
     uid: walletState.address,
     seasonId: seasonState.season?.id,
@@ -21,9 +24,16 @@ export const AppContextProvider = ({ children }) => {
     gameEndConfig: seasonState.season?.gameEndConfig,
     prizePool: seasonState.season?.prizePool,
   });
+  const smartContractState = useSmartContract({
+    provider: walletState.provider,
+    checkNetwork: walletState.checkNetwork,
+    user: userState.user,
+    season: seasonState.season,
+  });
 
   return (
-    <AppContext.Provider value={{ walletState, seasonState, userState, leaderboardState }}>
+    <AppContext.Provider
+      value={{ walletState, seasonState, marketState, userState, leaderboardState, smartContractState }}>
       {children}
     </AppContext.Provider>
   );

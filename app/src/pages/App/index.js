@@ -3,6 +3,7 @@ import { Box, Grid } from '@mui/material';
 
 import Balloon from './components/Balloon';
 import Earnings from './components/Earnings';
+import LastPurchase from './components/LastPurchase';
 import Leaderboard from './components/Leaderboard';
 import Logo from './components/Logo';
 import MainButton from './components/MainButton';
@@ -10,10 +11,10 @@ import Referral from './components/Referral';
 import Timer from './components/Timer';
 import UserInfo from './components/UserInfo';
 import Winner from './components/Winner';
-import useAppContext from '../../hooks/\buseAppContext';
+import useAppContext from '../../hooks/useAppContext';
 
 const App = () => {
-  const { userState, seasonState, leaderboardState, walletState } = useAppContext();
+  const { userState, seasonState, marketState, leaderboardState, walletState } = useAppContext();
   const [ended, setEnded] = useState(false);
 
   useEffect(() => {
@@ -71,16 +72,18 @@ const App = () => {
         <Grid container spacing={1}>
           <Grid item xs={4} sx={{ height: '100%' }}>
             <Box height="100%" display="flex" flexDirection="column" alignItems="flex-start">
-              <UserInfo
-                username={userState?.user?.username || ''}
-                avatarURL={userState?.user?.avatarURL}
-                address={walletState.address}
-                numberOfPump={userState?.gamePlay?.numberOfPump || 0}
-              />
-              <Box flex={1} py={1}>
+              <Box pt={2}>
+                <Logo />
+              </Box>
+              <Box flex={1}>
                 <Referral refCode={userState?.user?.referralCode || ''} referrals={userState?.referralUsers || []} />
               </Box>
-              <Earnings referralReward={userState?.user?.referralReward} holderReward={userState?.user?.holderReward} />
+              <Earnings
+                referralReward={userState?.user?.referralReward}
+                holderReward={userState?.user?.holderReward}
+                address={walletState.address}
+                ethPriceInUsd={marketState.market?.ethPriceInUsd}
+              />
             </Box>
           </Grid>
           <Grid item xs={4}>
@@ -108,7 +111,18 @@ const App = () => {
               flexDirection="column"
               justifyContent="space-between"
               alignItems="flex-end">
-              <Logo />
+              <UserInfo
+                address={walletState.address}
+                numberOfPump={userState?.gamePlay?.numberOfPump || 0}
+                disconnect={walletState.logout}
+              />
+              <LastPurchase
+                season={seasonState.season}
+                address={walletState.address}
+                numberOfPump={userState?.gamePlay?.numberOfPump || 0}
+                disconnect={walletState.logout}
+                latestPurchase={leaderboardState.gamePlays.sort((a, b) => b.lastPurchaseTime - a.lastPurchaseTime)[0]}
+              />
               <Leaderboard
                 leaderboardData={leaderboardState.gamePlays}
                 topHoldersRewards={leaderboardState.topHoldersRewards}

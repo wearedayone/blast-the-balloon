@@ -4,43 +4,31 @@ import { faker } from '@faker-js/faker';
 import admin, { firestore } from '../configs/firebase.config.js';
 import { getActiveSeasonId } from './season.service.js';
 
-const CODE_LENGTH = 8;
-
-export const generateCode = (length) => {
-  const charset = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let retVal = '';
-  for (let i = 0, n = charset.length; i < length; ++i) {
-    retVal += charset.charAt(Math.floor(Math.random() * n)).toLowerCase();
-  }
-  return retVal;
-};
-
 export const createUserRecord = async ({ message, signature }) => {
   const recoveredAddress = verifyMessage(message, signature).toLowerCase();
 
   const snapshot = await firestore.collection('user').doc(recoveredAddress).get();
   if (!snapshot.exists) {
-    let validReferralCode = false;
-    let referralCode = generateCode(CODE_LENGTH);
-    while (!validReferralCode) {
-      const code = await firestore.collection('user').where('referralCode', '==', referralCode).limit(1).get();
-      if (code.empty) {
-        validReferralCode = true;
+    let validUsername = false;
+    let username = faker.internet.userName();
+    while (!validUsername) {
+      const existedSnapshot = await firestore.collection('user').where('username', '==', username).limit(1).get();
+      if (existedSnapshot.empty) {
+        validUsername = true;
       } else {
-        referralCode = generateCode(CODE_LENGTH);
+        username = faker.internet.userName();
       }
     }
 
-    const username = faker.internet.userName();
     await firestore
       .collection('user')
       .doc(recoveredAddress)
       .set({
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         username,
-        avatarURL: `https://placehold.co/400x400/1e90ff/FFF?text=${username[0].toUpperCase()}`,
+        avatarURL: faker.image.url({ width: 400, height: 400 }),
         address: recoveredAddress,
-        referralCode,
+        referralCode: '',
         inviteCode: '',
         referralReward: 0,
         holderReward: 0,
@@ -57,8 +45,12 @@ export const createUserRecord = async ({ message, signature }) => {
   }
 };
 
-export const addUserRefCode = async ({ message, signature, refCode }) => {
+export const addUserRefCode = async ({ message, signature, inviteCode }) => {
   const recoveredAddress = verifyMessage(message, signature).toLowerCase();
 
-  // add refCode for user with uid === recoveredAddress
+  const snapshot = await firestore.collection('user').where('referralCode', '==', inviteCode).limit(1).get();
+  if (snapshot.empty) throw new Error('Invalid invite code');
+  if (snapshot.docs[0].id === recoveredAddress) throw new Error('Invalid invite code');
+
+  await firestore.collection('user').doc(recoveredAddress).set({ inviteCode }, { merge: true });
 };

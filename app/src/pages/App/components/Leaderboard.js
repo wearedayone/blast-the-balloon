@@ -1,10 +1,15 @@
 import { useMemo, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
 
 const tabs = [
   { id: 'pumpers', title: 'TOP PUMPERS' },
   { id: 'last-purchase', title: 'LAST PURCHASE' },
 ];
+const aspectRatio = 949 / 1340;
+const VERTICAL_BOUND = window.screen.height * 0.4;
+const HORIZONTAL_BOUND = window.screen.width * 0.3;
+const WIDTH = Math.max(VERTICAL_BOUND * aspectRatio, HORIZONTAL_BOUND);
 const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }) => {
   const [tab, setTab] = useState('pumpers');
 
@@ -25,13 +30,23 @@ const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }
       pl={5}
       pr={6}
       pb={1}
-      width={400}
+      width={WIDTH}
       display="flex"
       flexDirection="column"
       gap={0.5}
-      sx={{ aspectRatio: '473/670', backgroundImage: 'url(/images/leaderboard-frame.png)', backgroundSize: 'contain' }}>
-      <Box bgcolor="#DFFF00" p={1}>
-        <Typography color="#12140D" align="center">
+      position="relative"
+      sx={{
+        aspectRatio: '949/1340',
+        backgroundImage: 'url(/images/leaderboard-frame.png)',
+        backgroundSize: 'contain',
+      }}>
+      <img
+        src="/images/benefits.svg"
+        alt=""
+        style={{ position: 'absolute', bottom: 0, left: 0, transform: 'translateX(-105%)' }}
+      />
+      <Box pb={`${WIDTH * 0.01}px`}>
+        <Typography fontSize={18} sx={{ mr: 1 }} color="white" align="center">
           LEADERBOARD
         </Typography>
       </Box>
@@ -40,93 +55,98 @@ const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }
           <Box
             key={item.id}
             px={2}
-            pt={0.75}
-            pb={1.25}
+            py={0.5}
             flex={1}
             sx={{
               cursor: 'pointer',
-              backgroundImage:
-                tab === item.id
-                  ? 'linear-gradient(0deg, #DFFF00 -25%, rgba(223, 255, 0, 0) 100%)'
-                  : 'linear-gradient(0deg, #979000 -185%, rgba(151, 144, 0, 0) 100%);',
+              backgroundColor: tab === item.id ? '#DFFF00' : '#979000',
             }}
             onClick={() => setTab(item.id)}>
-            <Typography fontSize={13} color={tab === item.id ? '#DFFF00' : '#979000'} align="center">
+            <Typography fontSize={13} color="#12140D" align="center">
               {item.title}
             </Typography>
           </Box>
         ))}
-        <Box position="absolute" sx={{ bottom: 10 }}>
-          <TableHeader title="Name" sx={{ left: 50 }} />
-          <TableHeader title="Nodes" sx={{ left: 137 }} />
-          <TableHeader title="Profit" sx={{ left: 240 }} />
-        </Box>
       </Box>
-      <Box sx={{ overflowY: 'scroll', height: 375 }}>
-        {data.map((gamePlay, index) => (
-          <Grid
-            container
-            key={gamePlay.id}
-            p={0.5}
-            mb={0.5}
-            display="flex"
-            alignItems="center"
+      <Box
+        sx={{
+          position: 'relative',
+          overflowX: 'visible',
+          height: 18,
+          '& .MuiTypography-root': {
+            position: 'absolute',
+            fontFamily: 'Oswald',
+            color: 'white',
+            fontSize: 12,
+            textTransform: 'uppercase',
+          },
+        }}>
+        <Typography sx={{ left: WIDTH * 0.06 }}>Name</Typography>
+        <Typography sx={{ left: WIDTH * 0.37 }}>Nodes</Typography>
+        <Typography sx={{ left: WIDTH * 0.67 }}>Profit</Typography>
+      </Box>
+      <Box
+        mx={-3}
+        px={3}
+        sx={{
+          overflowY: 'scroll',
+          height: WIDTH * 0.91,
+        }}>
+        <Box position="relative" height="inherit">
+          <Box
+            position="absolute"
             sx={{
-              backgroundImage: gamePlay.isUser
-                ? 'linear-gradient(90deg, #DFFF00 0%, rgba(151, 144, 0, 0) 100%, rgba(223, 255, 0, 0) 100%)'
-                : 'linear-gradient(90deg, #979000 0%, rgba(151, 144, 0, 0) 100%)',
-            }}>
-            <Grid item xs={5}>
-              <Box display="flex" gap={1} alignItems="center">
-                <img
-                  src={gamePlay.avatarURL}
-                  width={40}
-                  height={40}
-                  alt={gamePlay.username}
-                  style={{ objectFit: 'cover', border: '1px solid black' }}
-                />
-                <Typography color="#DFFF00" fontSize={15}>
-                  {gamePlay.username}
+              left: 0,
+              top: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: 'linear-gradient(0deg, #191B11 0%, rgba(25, 27, 17, 0) 100%)',
+            }}
+          />
+          {data.map((gamePlay, index) => (
+            <Grid
+              container
+              key={gamePlay.id}
+              p={0.5}
+              mb={0.5}
+              display="flex"
+              alignItems="center"
+              sx={{
+                position: 'relative',
+                backgroundImage: gamePlay.isUser
+                  ? 'linear-gradient(90deg, #FFFFFF 0%, rgba(151, 144, 0, 0) 100%)'
+                  : 'linear-gradient(90deg, #979000 0%, rgba(151, 144, 0, 0) 100%)',
+                '& .MuiTypography-root': { fontFamily: 'Oswald', color: 'white' },
+              }}>
+              {gamePlay.isUser && <StarIcon htmlColor="white" sx={{ position: 'absolute', zIndex: 10, left: -26 }} />}
+              <Grid item xs={5}>
+                <Box display="flex" gap={1} alignItems="center" pl={2}>
+                  <Typography color={`${gamePlay.isUser ? 'black' : 'white'} !important`} fontSize={15}>
+                    {gamePlay.username}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography align="center" fontSize={15} fontWeight={500}>
+                  {gamePlay.numberOfPump}
                 </Typography>
-              </Box>
+              </Grid>
+              <Grid item xs={4}>
+                <Box display="flex" alignItems="flex-end" justifyContent="flex-end">
+                  <Typography fontSize={15} lineHeight="20px" align="center" fontWeight={500}>
+                    {rewards[index] ?? 0}
+                  </Typography>
+                  <Typography fontSize={12} align="center" fontWeight={300}>
+                    eth
+                  </Typography>
+                </Box>
+              </Grid>
             </Grid>
-            <Grid item xs={2}>
-              <Typography color="#DFFF00" align="center" fontSize={15}>
-                {gamePlay.numberOfPump}
-              </Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Box display="flex" alignItems="flex-end" justifyContent="flex-end">
-                <Typography color="#DFFF00" fontSize={15} lineHeight="20px" align="center">
-                  {rewards[index] ?? 0}
-                </Typography>
-                <Typography fontSize={9} color="#DFFF00" align="center" sx={{ alignSelf: 'flex-end' }}>
-                  ETH
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        ))}
+          ))}
+        </Box>
       </Box>
     </Box>
   );
 };
-
-const TableHeader = ({ title, sx }) => (
-  <Box
-    sx={{
-      position: 'absolute',
-      width: 40,
-      borderBottom: '12px solid #1b1f1d',
-      borderLeft: '5px solid transparent',
-      borderRight: '5px solid transparent',
-      height: 0,
-      ...sx,
-    }}>
-    <Typography color="#979000" fontSize={7} align="center" lineHeight={2} textTransform="uppercase">
-      {title}
-    </Typography>
-  </Box>
-);
 
 export default Leaderboard;

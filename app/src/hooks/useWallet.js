@@ -1,29 +1,42 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { Web3Provider } from '@ethersproject/providers';
 
 import environments from '../utils/environments';
-import { createUser } from '../services/user.service';
+import { createUser, addInviteCode } from '../services/user.service';
 
 const { NETWORK_ID } = environments;
 
 const { ethereum } = window;
-const provider = ethereum.providers?.find((item) => item.isMetaMask) || ethereum.providers[0];
+let provider = ethereum;
+if (ethereum?.providers?.length) {
+  provider = ethereum.providers?.find((item) => item.isMetaMask) || ethereum.providers[0];
+}
 
 const useWallet = () => {
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [initialized, setInitialized] = useState(false);
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState(null);
 
+  // utils
   const checkNetwork = async () => {
-    if (!ethereum) return;
+    if (!provider) return;
 
     if (provider.chainId !== NETWORK_ID) {
-      await provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: NETWORK_ID }],
-      });
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: NETWORK_ID }],
+        });
+      } catch (err) {
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [{ chainId: NETWORK_ID, ...BLAST_CHAINS[NETWORK_ID] }],
+        });
+      }
     }
   };
 
@@ -51,10 +64,17 @@ const useWallet = () => {
     await createUser({ message, signature });
   };
 
-  // console.log(ethereum, ethereum.networkVersion, NETWORK_ID);
+  const addUserInviteCode = async ({ inviteCode }) => {
+    if (!address) return;
+    const message = `Sign this message to add your invite code\n\nThis request will not trigger a blockchain transaction or cost any gas fees.`;
+    const signature = await signMessage(message);
 
+    await addInviteCode({ message, signature, inviteCode });
+  };
+
+  // wallet functions
   const connectWallet = async () => {
-    if (!ethereum) return;
+    if (!provider) return;
 
     setLoading(true);
 
@@ -70,7 +90,7 @@ const useWallet = () => {
       await checkNetwork();
     } catch (err) {
       console.error(err);
-      if (!err.message.includes('rejected')) {
+      if (err.message && !err.message.includes('rejected')) {
         enqueueSnackbar(err.message, { variant: 'error' });
       }
     }
@@ -78,10 +98,13 @@ const useWallet = () => {
     setLoading(false);
   };
 
-  const logout = () => setAddress(null);
+  const logout = () => {
+    setAddress(null);
+    navigate('/');
+  };
 
   const init = async () => {
-    if (!ethereum) {
+    if (!provider) {
       setInitialized(true);
       return;
     }
@@ -120,11 +143,37 @@ const useWallet = () => {
     initialized,
     loading,
     address,
+    provider,
+    checkNetwork,
     connectWallet,
     logout,
     signMessage,
     createUserRecord,
+    addUserInviteCode,
   };
 };
 
 export default useWallet;
+
+const BLAST_CHAINS = {
+  '0xee': {
+    rpcUrls: ['https://rpc.blastblockchain.com'],
+    chainName: 'Blast Mainnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    blockExplorerUrls: ['https://blastscan.io/'],
+  },
+  '0xa0c71fd': {
+    rpcUrls: ['https://blast-sepolia.blockpi.network/v1/rpc/public'],
+    chainName: 'Blast Sepolia Testnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    blockExplorerUrls: ['https://testnet.blastscan.io/'],
+  },
+};

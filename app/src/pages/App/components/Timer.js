@@ -42,30 +42,47 @@ const Timer = ({ endTime, ended, setEnded }) => {
   }, [endTime, ended]);
 
   return (
-    <Box position="relative">
-      <img src={ended ? '/images/timer-end-container.png' : '/images/timer-container.png'} alt="timer-container" />
-      <Box
-        position="absolute"
-        p={1.5}
-        top={0}
-        left={0}
-        width="100%"
-        height="100%"
-        display="flex"
-        flexDirection="column">
-        <Typography
-          fontSize={ended ? 15 : 22}
-          color={ended ? '#F0FF92' : '#979000'}
-          align="center"
-          lineHeight={ended ? '15px' : '22px'}>
-          {ended ? 'NEXT ROUND STARTS IN:' : 'ROUND ENDS IN'}
+    <Box display="flex" flexDirection="column" alignItems="center">
+      <Box>
+        <Typography fontSize={30} fontWeight={700} fontFamily="Oswald, sans-serif" color="#DFFF00" align="center">
+          FULLY ONCHAIN PONZINOMICS
         </Typography>
-        <Typography
-          fontSize={40}
-          fontWeight={500}
-          color="#F0FF92"
-          align="center"
-          lineHeight="32px">{`${timer.h}:${timer.m}:${timer.s}`}</Typography>
+      </Box>
+      <Box>
+        <Typography fontSize={22} fontFamily="Oswald, sans-serif" color="white" align="center">
+          Zero fee lottery. Earn 100% of Blast Points and $BALL Airdrop.
+        </Typography>
+      </Box>
+      <Box mt={1} position="relative">
+        <img src={ended ? '/images/timer-end-container.png' : '/images/timer-container.png'} alt="timer-container" />
+        <Box
+          position="absolute"
+          p={1.5}
+          top={0}
+          left={0}
+          width="100%"
+          height="100%"
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          gap={1}>
+          <Typography
+            fontSize={22}
+            fontFamily="'Palanquin Dark', sans-serif"
+            color={ended ? '#F0FF92' : '#979000'}
+            align="center"
+            lineHeight="18px">
+            {ended ? 'NEXT ROUND STARTS IN:' : 'ROUND ENDS IN'}
+          </Typography>
+          <Typography
+            fontSize={38}
+            fontWeight={500}
+            fontFamily="Oswald, sans-serif"
+            color="white"
+            align="center"
+            lineHeight="32px">{`${timer.h}:${timer.m}:${timer.s}`}</Typography>
+        </Box>
       </Box>
     </Box>
   );

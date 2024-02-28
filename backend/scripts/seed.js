@@ -1,10 +1,15 @@
+import axios from 'axios';
+
 import admin, { firestore } from '../configs/firebase.config.js';
+import gameConfigs from '../configs/game.config.js';
 
 const main = async () => {
   const seasonId = '1';
 
   // system
   await firestore.collection('system').doc('config').set({ activeSeasonId: seasonId });
+  const ethPriceRes = await axios.get('https://api.coinbase.com/v2/exchange-rates?currency=ETH');
+  await firestore.collection('system').doc('market').set({ ethPriceInUsd: ethPriceRes.data.data.rates.USD });
 
   // season
   const now = Date.now();
@@ -13,33 +18,17 @@ const main = async () => {
     .doc(seasonId)
     .set({
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      startTime: admin.firestore.FieldValue.serverTimestamp(),
-      estimatedEndTime: admin.firestore.Timestamp.fromMillis(now + 2 * 24 * 60 * 60 * 1000),
-      maxEndTime: admin.firestore.Timestamp.fromMillis(now + 4 * 24 * 60 * 60 * 1000),
-      pauseBetweenSeason: 4 * 60 * 60,
-      prizePool: 500,
-      endGameJackpot: 10,
-      pumpBought: 10,
-      pumpSold: 2,
-      buyConfig: {
-        endGameJackpotW: 0.05,
-        referralW: 0.1,
-        dividendW: 0.25,
-        operationW: 0,
-        prizePool: 0.6,
-      },
-      gameEndConfig: {
-        lastLuckyW: 0.2,
-        topHolderW: 0.1,
-        topHoldersDistribution: [10, 6, 4],
-        lastPurchaseW: 0.65,
-        nextRoundW: 0.05,
-        operationW: 0,
-      },
-      pumpPrice: {
-        basePrice: 0.001,
-        k: 200000,
-      },
+      startTime: admin.firestore.Timestamp.fromMillis(startTimeUnix * 1000),
+      estimatedEndTime: admin.firestore.Timestamp.fromMillis(endTimeUnix * 1000),
+      maxEndTime: admin.firestore.Timestamp.fromMillis(maxEndTimeUnix * 1000),
+      pauseBetweenSeason: gameConfigs.pauseBetweenSeason,
+      prizePool,
+      endGameJackpot: eJackpot,
+      pumpBought: pumpB,
+      pumpSold: pumpS,
+      buyConfig: gameConfigs.buyConfig,
+      gameEndConfig: gameConfigs.gameEndConfig,
+      pumpPrice: gameConfigs.pumpPrice,
     });
 
   // user && gamePlay

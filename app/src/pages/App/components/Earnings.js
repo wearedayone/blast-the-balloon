@@ -3,12 +3,16 @@ import { Box, Button, IconButton, Menu, Typography } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+import { useSnackbar } from 'notistack';
 
 import { customFormat } from '../../../utils/numbers';
+import useAppContext from '../../../hooks/useAppContext';
+
+const isBigScreen = window.screen.height > 1000;
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
+const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), address, ethPriceInUsd }) => {
   const total = useMemo(() => referralReward + holderReward + lockedValue, [referralReward, holderReward, lockedValue]);
 
   const gap = useMemo(() => total * 0.01, [total]);
@@ -39,7 +43,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
     });
 
   return (
-    <Box position="relative" p={2}>
+    <Box position="relative" p={2} sx={{ '& canvas': { width: '30vh !important', height: '30vh !important' } }}>
       <Doughnut
         data={{
           labels: ['Referral', "Holder's", 'Locked'],
@@ -93,7 +97,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
           ],
         }}
         options={{
-          cutout: '55%',
+          cutout: isBigScreen ? '55%' : 75,
           plugins: {
             legend: { display: false },
             tooltip: { enabled: false },
@@ -101,7 +105,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
         }}
       />
       <Doughnut
-        style={{ position: 'absolute', top: '5%', left: '5%' }}
+        style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
         data={{
           labels: ['Referral', '', "Holder's", '', 'Locked'],
           datasets: [
@@ -115,7 +119,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
                 { id: 'gap-1-3', value: gap },
               ],
               backgroundColor: [
-                'rgba(255, 255, 255, 0.3)',
+                'rgba(255, 255, 255, 0)',
                 'transparent',
                 'rgba(151, 144, 0, 0.4)',
                 'transparent',
@@ -127,7 +131,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
           ],
         }}
         options={{
-          cutout: '50%',
+          cutout: isBigScreen ? '50%' : 70,
           plugins: {
             legend: { display: false },
             tooltip: {
@@ -156,18 +160,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = 0.234 }) => {
         <Typography fontSize={10} color="#979000" align="center" fontFamily="Oxygen">
           TOTAL EARNINGS
         </Typography>
-        <Button
-          variant="contained"
-          size="small"
-          sx={{
-            borderRadius: 40,
-            fontFamily: 'Oxygen',
-            backgroundColor: '#DFFF00',
-            color: '#12140D',
-            '&:hover': { backgroundColor: '#c8e500' },
-          }}>
-          Withdraw
-        </Button>
+        <Withdraw address={address} total={total} ethPriceInUsd={ethPriceInUsd} />
       </Box>
     </Box>
   );
@@ -236,6 +229,125 @@ const EarningsInfo = () => {
             dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
             ea commodo consequat
           </Typography>
+        </Box>
+        <img src="/images/connector-long.png" alt="" width={400} />
+      </Menu>
+    </>
+  );
+};
+
+const Withdraw = ({ address, total, ethPriceInUsd }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const {
+    smartContractState: { withdraw },
+  } = useAppContext();
+  const [loading, setLoading] = useState(false);
+  const [tooltipAnchorEl, setTooltipAnchorEl] = useState(null);
+
+  const onCloseToolTip = () => setTooltipAnchorEl(null);
+  const submit = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      await withdraw();
+      enqueueSnackbar('Withdrawed successfully', { variant: 'success' });
+    } catch (err) {
+      console.error(err);
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <>
+      <Button
+        variant="contained"
+        size="small"
+        sx={{
+          borderRadius: 40,
+          fontFamily: 'Oxygen',
+          backgroundColor: '#DFFF00',
+          color: '#12140D',
+          '&:hover': { backgroundColor: '#c8e500' },
+        }}
+        onClick={(e) => setTooltipAnchorEl(e.currentTarget)}>
+        Withdraw
+      </Button>
+      <Menu
+        id="withdraw-info-menu"
+        aria-labelledby="withdraw-info-button"
+        anchorEl={tooltipAnchorEl}
+        open={Boolean(tooltipAnchorEl)}
+        onClose={onCloseToolTip}
+        onClick={(e) => {
+          if (!e.target.className.includes('withdraw-info-content')) onCloseToolTip();
+        }}
+        anchorOrigin={{ vertical: 'center', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        PaperProps={{
+          sx: {
+            boxShadow: 'none',
+            backgroundColor: 'transparent',
+            '& ul': { display: 'flex', flexDirection: 'column', alignItems: 'flex-end' },
+          },
+        }}>
+        <Box
+          className="withdraw-info-content"
+          width={300}
+          p={0.5}
+          sx={{
+            backgroundImage: 'linear-gradient(180deg, #979000 0%, rgba(151, 144, 0, 0) 100%)',
+            // '& .MuiTypography-root': { color: 'white', fontFamily: 'Oswald' },
+          }}>
+          <Typography className="withdraw-info-content" color="white" fontWeight={500} textTransform="uppercase">
+            WITHDRAW YOUR FUNDS
+          </Typography>
+          <Typography className="withdraw-info-content" fontSize={12} color="#DFFF00">
+            YOUR WALLET
+          </Typography>
+          <Box bgcolor="#DFFF00" p={0.5} mb={1}>
+            <Typography className="withdraw-info-content" fontFamily="Oswald" fontSize={15}>
+              {address}
+            </Typography>
+          </Box>
+          <Typography
+            className="withdraw-info-content"
+            fontFamily="Oswald"
+            color="white"
+            fontSize={11}
+            fontWeight={200}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+            ea commodo consequat
+          </Typography>
+          <Typography
+            className="withdraw-info-content"
+            color="white"
+            fontSize={12}
+            fontWeight={500}
+            textTransform="uppercase">
+            You will receive:{' '}
+            <span style={{ fontFamily: 'Oswald', color: '#DFFF00' }}>
+              {customFormat(ethPriceInUsd * total, 1)} DOLLARS ({customFormat(total, 3)}ETH){' '}
+            </span>
+          </Typography>
+          <Button
+            className="withdraw-info-content"
+            variant="contained"
+            size="small"
+            sx={{
+              px: 3,
+              mt: 1,
+              mb: 2,
+              borderRadius: 0,
+              backgroundColor: '#DFFF00',
+              color: '#12140D',
+              '&:hover': { backgroundColor: '#c8e500' },
+            }}
+            onClick={submit}>
+            {loading ? 'Processing...' : 'Withdraw'}
+          </Button>
         </Box>
         <img src="/images/connector-long.png" alt="" width={400} />
       </Menu>
