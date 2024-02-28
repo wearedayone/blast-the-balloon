@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { Web3Provider } from '@ethersproject/providers';
 
@@ -14,6 +15,7 @@ if (ethereum?.providers?.length) {
 }
 
 const useWallet = () => {
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [initialized, setInitialized] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,10 +26,17 @@ const useWallet = () => {
     if (!provider) return;
 
     if (provider.chainId !== NETWORK_ID) {
-      await provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: NETWORK_ID }],
-      });
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: NETWORK_ID }],
+        });
+      } catch (err) {
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [{ chainId: NETWORK_ID, ...BLAST_CHAINS[NETWORK_ID] }],
+        });
+      }
     }
   };
 
@@ -81,7 +90,7 @@ const useWallet = () => {
       await checkNetwork();
     } catch (err) {
       console.error(err);
-      if (!err.message.includes('rejected')) {
+      if (err.message && !err.message.includes('rejected')) {
         enqueueSnackbar(err.message, { variant: 'error' });
       }
     }
@@ -89,7 +98,10 @@ const useWallet = () => {
     setLoading(false);
   };
 
-  const logout = () => setAddress(null);
+  const logout = () => {
+    setAddress(null);
+    navigate('/');
+  };
 
   const init = async () => {
     if (!provider) {
@@ -142,3 +154,26 @@ const useWallet = () => {
 };
 
 export default useWallet;
+
+const BLAST_CHAINS = {
+  '0xee': {
+    rpcUrls: ['https://rpc.blastblockchain.com'],
+    chainName: 'Blast Mainnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    blockExplorerUrls: ['https://blastscan.io/'],
+  },
+  '0xa0c71fd': {
+    rpcUrls: ['https://blast-sepolia.blockpi.network/v1/rpc/public'],
+    chainName: 'Blast Sepolia Testnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    blockExplorerUrls: ['https://testnet.blastscan.io/'],
+  },
+};

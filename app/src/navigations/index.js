@@ -9,7 +9,8 @@ const Navigations = () => {
 
   if (!initialized) return null;
 
-  if (!address) return <AuthRoutes />;
+  // if (!address) 
+  return <AuthRoutes />;
 
   return <MainRoutes />;
 };
