@@ -43,6 +43,7 @@ const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }
       <img
         src="/images/benefits.svg"
         alt=""
+        width={WIDTH * 0.4}
         style={{ position: 'absolute', bottom: 0, left: 0, transform: 'translateX(-105%)' }}
       />
       <Box pb={`${WIDTH * 0.01}px`}>
