@@ -13,6 +13,7 @@ export const AppContextProvider = ({ children }) => {
   const userState = useUserData({
     uid: walletState.address,
     seasonId: seasonState.season?.id,
+    createUserRecord: walletState.createUserRecord,
   });
   const leaderboardState = useLeaderboard({
     uid: walletState.address,

@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  onSnapshot,
-  collection,
-  where,
-  doc,
-  query,
-  documentId,
-  getDocs,
-} from 'firebase/firestore';
+import { onSnapshot, collection, where, doc, query, documentId, getDocs } from 'firebase/firestore';
 import chunk from 'lodash.chunk';
 
 import { firestore } from '../configs/firebase.config';
@@ -16,11 +8,7 @@ export const getUserBatch = async (userIds, seasonId) => {
   const chunkIdsArrays = chunk(userIds, 10);
 
   const gamePlayPromises = chunkIdsArrays.map((ids) => {
-    const q = query(
-      collection(firestore, 'gamePlay'),
-      where('seasonId', '==', seasonId),
-      where('userId', 'in', ids)
-    );
+    const q = query(collection(firestore, 'gamePlay'), where('seasonId', '==', seasonId), where('userId', 'in', ids));
 
     return getDocs(q);
   });
@@ -44,26 +32,20 @@ export const getUserBatch = async (userIds, seasonId) => {
   }, {});
 
   const userPromises = chunkIdsArrays.map((ids) => {
-    const q = query(
-      collection(firestore, 'user'),
-      where(documentId(), 'in', ids)
-    );
+    const q = query(collection(firestore, 'user'), where(documentId(), 'in', ids));
 
     return getDocs(q);
   });
 
   const userSnapshots = await Promise.all(userPromises);
   const users = userSnapshots.reduce((result, snapshot) => {
-    return [
-      ...result,
-      ...snapshot.docs.map((item) => ({ id: item.id, ...item.data() })),
-    ];
+    return [...result, ...snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))];
   }, []);
 
   return { users, numberOfPump, lastPurchaseTime };
 };
 
-const useUserData = ({ uid, seasonId }) => {
+const useUserData = ({ uid, seasonId, createUserRecord }) => {
   const [data, setData] = useState({
     user: null,
     referralUsers: null,
@@ -79,6 +61,10 @@ const useUserData = ({ uid, seasonId }) => {
             ...prev,
             user: { id: snapshot.id, ...snapshot.data() },
           }));
+        } else {
+          createUserRecord()
+            .then(() => console.log('created user record'))
+            .catch((err) => console.error(err));
         }
       });
 
@@ -96,10 +82,7 @@ const useUserData = ({ uid, seasonId }) => {
         }
       });
 
-      const referralQuery = query(
-        collection(firestore, 'userReferralProfit'),
-        where('userId', '==', uid)
-      );
+      const referralQuery = query(collection(firestore, 'userReferralProfit'), where('userId', '==', uid));
       referralUnsubscribe = onSnapshot(referralQuery, async (snapshot) => {
         if (!snapshot.empty) {
           const userIds = snapshot.docs.map((item) => item.data().referralId);

@@ -3,12 +3,12 @@ import { useSnackbar } from 'notistack';
 import { Web3Provider } from '@ethersproject/providers';
 
 import environments from '../utils/environments';
+import { createUser } from '../services/user.service';
 
 const { NETWORK_ID } = environments;
 
 const { ethereum } = window;
-const provider =
-  ethereum.providers?.find((item) => item.isMetaMask) || ethereum.providers[0];
+const provider = ethereum.providers?.find((item) => item.isMetaMask) || ethereum.providers[0];
 
 const useWallet = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -20,7 +20,7 @@ const useWallet = () => {
     if (!ethereum) return;
 
     if (provider.chainId !== NETWORK_ID) {
-      await window.provider.request({
+      await provider.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: NETWORK_ID }],
       });
@@ -41,6 +41,14 @@ const useWallet = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const createUserRecord = async () => {
+    if (!address) return;
+    const message = `Welcome to Blast the Balloon!\n\nSign this message to create your account\n\nThis request will not trigger a blockchain transaction or cost any gas fees.`;
+    const signature = await signMessage(message);
+
+    await createUser({ message, signature });
   };
 
   // console.log(ethereum, ethereum.networkVersion, NETWORK_ID);
@@ -92,8 +100,7 @@ const useWallet = () => {
       console.log({ networkId });
     });
 
-    return () =>
-      provider?.removeListener('accountsChanged', onWeb3AccountsChanged);
+    return () => provider?.removeListener('accountsChanged', onWeb3AccountsChanged);
   };
 
   const onWeb3AccountsChanged = (accounts) => {
@@ -116,6 +123,7 @@ const useWallet = () => {
     connectWallet,
     logout,
     signMessage,
+    createUserRecord,
   };
 };
 
