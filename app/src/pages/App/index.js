@@ -29,36 +29,12 @@ const App = () => {
     <Box minHeight="100vh" bgcolor="#1b1b1b">
       <Winner
         ended={ended}
-        winners={[
-          {
-            id: 1,
-            username: 'jack.handsome',
-            avatarURL:
-              'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max',
-            reward: 100,
-          },
-          {
-            id: 2,
-            username: 'jack.day1',
-            avatarURL:
-              'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max',
-            reward: 90,
-          },
-          {
-            id: 3,
-            username: 'jack.day2',
-            avatarURL:
-              'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max',
-            reward: 80,
-          },
-          {
-            id: 4,
-            username: 'jack.day3',
-            avatarURL:
-              'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max',
-            reward: 70,
-          },
-        ]}
+        season={seasonState.season}
+        topHoldersRewards={leaderboardState.topHoldersRewards}
+        lastPurchaseRewards={leaderboardState.lastPurchaseRewards}
+        playerLeaderboardIndex={leaderboardState.gamePlays.findIndex(({ isUser }) => isUser)}
+        ethPriceInUsd={marketState.market?.ethPriceInUsd}
+        winners={leaderboardState.gamePlays.sort((a, b) => b.numberOfPump - a.numberOfPump)}
       />
       <Box
         minHeight="100vh"

@@ -5,6 +5,7 @@ import { customFormat } from '../../../utils/numbers';
 
 const LastPurchase = ({ latestPurchase, season }) => {
   const [timer, setTimer] = useState({
+    d: 0,
     h: 0,
     m: 0,
     s: 0,
@@ -28,8 +29,6 @@ const LastPurchase = ({ latestPurchase, season }) => {
       s: s > 9 ? s : `0${s}`,
     });
   };
-
-  console.log('latestPurchase', latestPurchase);
 
   useEffect(() => {
     interval.current && clearInterval(interval.current);
