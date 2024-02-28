@@ -35,9 +35,9 @@ const Referral = ({ referrals, refCode }) => {
   };
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box width="100%" display="flex" flexDirection="column">
       <Box position="relative">
-        <img src="/images/ref-container.png" alt="ref-container" />
+        <img src="/images/ref-container.png" alt="ref-container" style={{ maxWidth: '100%' }} />
         <Box position="absolute" top="-20px" left="100%" sx={{ '& img': { cursor: 'pointer' } }}>
           <img src="/images/info-btn.png" alt="info" onClick={() => setOpenInstruction(!openInstruction)} />
         </Box>

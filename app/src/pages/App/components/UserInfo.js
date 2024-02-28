@@ -3,8 +3,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 const UserInfo = ({ address, numberOfPump, disconnect }) => {
   return (
-    <Box display="flex" gap={1} sx={{ transform: 'translateX(-10px)' }}>
-      <Box mt="12px" position="relative">
+    <Box width="100%" display="flex" justifyContent="flex-end" gap={1}>
+      <Box flexShrink={0} mt="12px" position="relative">
         <img src="/images/pump-container.png" alt="pump-container" />
         <Box
           position="absolute"
@@ -29,8 +29,8 @@ const UserInfo = ({ address, numberOfPump, disconnect }) => {
           </Typography>
         </Box>
       </Box>
-      <Box position="relative">
-        <img src="/images/profile-container.png" alt="profile-container" />
+      <Box flexShrink={1} position="relative">
+        <img src="/images/profile-container.png" alt="profile-container" style={{ maxWidth: '100%' }} />
         <Box position="absolute" top="5%" left="42%" display="flex" alignItems="center">
           <Typography fontSize={14} fontWeight={300} fontFamily="Oswald, sans-serif" color="#DFFF00">
             YOUR WALLET
