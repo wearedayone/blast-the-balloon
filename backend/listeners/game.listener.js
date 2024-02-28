@@ -23,7 +23,7 @@ const Events = {
 const listener = async () => {
   console.log('Listener is running...');
 
-  const provider = new JsonRpcProvider('https://blast-sepolia.blockpi.network/v1/rpc/public');
+  const provider = new JsonRpcProvider('https://sepolia.blast.io');
   const contract = new Contract(GAME_ADDRESS, Game.abi, provider);
 
   contract.on(Events.Register, async (uId, address, _username, _referralCode, _inviteId, _inviteName, _inviteCode) => {
