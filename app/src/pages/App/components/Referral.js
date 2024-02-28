@@ -75,7 +75,7 @@ const Referral = ({ referrals, refCode }) => {
               sx={{
                 '& input': {
                   flex: 1,
-                  fontSize: 8,
+                  fontSize: 15,
                   bgcolor: 'transparent',
                   border: 'none',
                   outline: 'none',
