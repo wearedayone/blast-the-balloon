@@ -27,7 +27,9 @@ interface IBalloon {
     bytes32 _affcode,
     uint256 _amount,
     uint256 _bTime,
-    uint256 _rID
+    uint256 _rID,
+    bool decreasing,
+    uint256 time
   );
   event Withdraw(uint256 _pID, uint256 _amount);
 

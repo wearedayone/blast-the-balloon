@@ -174,20 +174,26 @@ contract Balloon is AccessControl, IBalloon {
       plyrRnds_[_pID][rID_].lastB = block.timestamp;
     }
     // uint256 random = rand();
-    {
-      if (rand() % 10000 <= dTRatio_) {
-        // reduce round end time
-        round_[rID_].endT -= dTNumber_;
-      } else if (rand() % 10000 > iTRatio_) {
-        // increase round end time
-        if (round_[rID_].maxET > 0) {
-          if (round_[rID_].endT + iTNumber_ > round_[rID_].maxET) round_[rID_].endT = round_[rID_].maxET;
-          else round_[rID_].endT += iTNumber_;
-        } else {
-          round_[rID_].endT += iTNumber_;
-        }
+    uint256 seed = rand();
+    bool decreasing = false;
+    uint256 time = iTNumber_;
+
+    if (seed % 10000 <= dTRatio_) {
+      // reduce round end time
+      round_[rID_].endT -= dTNumber_;
+      decreasing = true;
+      time = dTNumber_;
+    } else if (seed % 10000 > iTRatio_) {
+      // increase round end time
+      if (round_[rID_].maxET > 0) {
+        if (round_[rID_].endT + iTNumber_ > round_[rID_].maxET) {
+          round_[rID_].endT = round_[rID_].maxET;
+        } else round_[rID_].endT += iTNumber_;
+      } else {
+        round_[rID_].endT += iTNumber_;
       }
     }
+
     {
       // prizeGame Jackpot
       if (jpShare_ > 0) {
@@ -222,17 +228,20 @@ contract Balloon is AccessControl, IBalloon {
       round_[rID_].prizePool += ((10000 - jpShare_ - opShare_ - holShare_ - refShare_) * msg.value) / 10000;
       lastBB_ = block.number;
     }
+    uint256 laff = plyr_[_pID].laff;
     emit BuyPump(
       _pID,
       msg.sender,
-      '',
+      plyr_[_pID].name,
       plyr_[_pID].refC,
       plyr_[_pID].laff,
-      '',
-      bytes32(0),
+      plyr_[laff].name,
+      plyr_[laff].refC,
       amount,
       block.timestamp,
-      rID_
+      rID_,
+      decreasing,
+      time
     );
   }
 
@@ -366,12 +375,12 @@ contract Balloon is AccessControl, IBalloon {
     return ePrice;
   }
 
-  function rand() internal returns (uint256) {
+  function rand() internal view returns (uint256) {
     uint256 seed = uint256(
       keccak256(
         abi.encodePacked(
           (block.timestamp)
-            .add(block.difficulty)
+            .add(block.prevrandao)
             .add((uint256(keccak256(abi.encodePacked(block.coinbase)))) / (block.timestamp))
             .add(block.gaslimit)
             .add((uint256(keccak256(abi.encodePacked(msg.sender)))) / (block.timestamp))

@@ -56,88 +56,95 @@ const listener = async () => {
     }
   });
 
-  contract.on(Events.BuyPump, async (_pID, _addr, _name, _refC, _affID, _affName, _affCode, _amount, _bTime, _rID) => {
-    console.log({ _pID, _addr, _name, _refC, _affID, _affName, _affCode, _amount, _bTime, _rID });
-    const roundId = Number(_rID.toString());
-    const userId = Number(_pID.toString());
-    const buyTime = Number(_bTime.toString());
-    const inviteCode = parseBytes32String(_affCode);
+  contract.on(
+    Events.BuyPump,
+    async (_pID, _addr, _name, _refC, _affID, _affName, _affCode, _amount, _bTime, _rID, decreasing, time) => {
+      console.log({ _pID, _addr, _name, _refC, _affID, _affName, _affCode, _amount, _bTime, _rID, decreasing, time });
+      const roundId = Number(_rID.toString());
+      const userId = Number(_pID.toString());
+      const buyTime = Number(_bTime.toString());
+      const inviteCode = parseBytes32String(_affCode);
 
-    // update season
-    const round = await contract.round_(roundId);
-    console.log('BuyPump', { round });
-    const endTimeUnix = Number(round.endT.toString());
+      // update season
+      const round = await contract.round_(roundId);
+      console.log('BuyPump', { round });
+      const endTimeUnix = Number(round.endT.toString());
 
-    const prizePool = formatEther(round.prizePool);
-    const eJackpot = formatEther(round.eJackpot);
-    const pumpB = Number(round.pumpB.toString());
+      const prizePool = formatEther(round.prizePool);
+      const eJackpot = formatEther(round.eJackpot);
+      const pumpB = Number(round.pumpB.toString());
 
-    const seasonDoc = await firestore.collection('season').doc(`${roundId}`).get();
-    if (seasonDoc.exists) {
-      await firestore
-        .collection('season')
-        .doc(`${roundId}`)
-        .update({
-          pumpBought: pumpB,
-          estimatedEndTime: admin.firestore.Timestamp.fromMillis(endTimeUnix * 1000),
-          prizePool,
-          eJackpot,
-        });
-    } else {
-      await firestore
-        .collection('season')
-        .doc(`${roundId}`)
-        .set({
-          pumpBought: pumpB,
-          estimatedEndTime: admin.firestore.Timestamp.fromMillis(endTimeUnix * 1000),
-          prizePool,
-          eJackpot,
-        });
-    }
-
-    // update user game play
-    const userGamePlay = await contract.plyrRnds_(userId, roundId);
-    const userGamePlayNumberOfPumps = Number(userGamePlay.pumpB.toString()) - Number(userGamePlay.pumpS.toString());
-
-    const gamePlaySnapshot = await firestore
-      .collection('gamePlay')
-      .where('userId', '==', _addr.toLowerCase())
-      .where('seasonId', '==', `${roundId}`)
-      .limit(1)
-      .get();
-
-    if (!gamePlaySnapshot.empty) {
-      await gamePlaySnapshot.docs[0].ref.update({
-        numberOfPump: userGamePlayNumberOfPumps,
-        lastPurchaseTime: admin.firestore.Timestamp.fromMillis(buyTime * 1000),
-      });
-    }
-
-    // update inviter referralReward
-    if (inviteCode) {
-      const inviteSnapshot = await firestore.collection('user').where('referralCode', '==', inviteCode).limit(1).get();
-      if (!inviteSnapshot.empty) {
-        const referralReward = await contract.getUserReferralReward(_affID);
-        await inviteSnapshot.docs[0].ref.update({ referralReward: Number(referralReward.toString()) });
+      const seasonDoc = await firestore.collection('season').doc(`${roundId}`).get();
+      if (seasonDoc.exists) {
+        await firestore
+          .collection('season')
+          .doc(`${roundId}`)
+          .update({
+            pumpBought: pumpB,
+            estimatedEndTime: admin.firestore.Timestamp.fromMillis(endTimeUnix * 1000),
+            prizePool,
+            eJackpot,
+          });
+      } else {
+        await firestore
+          .collection('season')
+          .doc(`${roundId}`)
+          .set({
+            pumpBought: pumpB,
+            estimatedEndTime: admin.firestore.Timestamp.fromMillis(endTimeUnix * 1000),
+            prizePool,
+            eJackpot,
+          });
       }
-    }
 
-    // update all user holderReward
-    const updateUserHolderReward = async (address) => {
-      const userId = Number((await contract.pIDxAddr_(address)).toString());
-      const holderReward = await contract.getUserHolderReward(userId);
-      await firestore
-        .collection('user')
-        .doc(address)
-        .update({
-          holderReward: formatEther(holderReward),
+      // update user game play
+      const userGamePlay = await contract.plyrRnds_(userId, roundId);
+      const userGamePlayNumberOfPumps = Number(userGamePlay.pumpB.toString()) - Number(userGamePlay.pumpS.toString());
+
+      const gamePlaySnapshot = await firestore
+        .collection('gamePlay')
+        .where('userId', '==', _addr.toLowerCase())
+        .where('seasonId', '==', `${roundId}`)
+        .limit(1)
+        .get();
+
+      if (!gamePlaySnapshot.empty) {
+        await gamePlaySnapshot.docs[0].ref.update({
+          numberOfPump: userGamePlayNumberOfPumps,
+          lastPurchaseTime: admin.firestore.Timestamp.fromMillis(buyTime * 1000),
         });
-    };
+      }
 
-    const userSnapshot = await firestore.collection('user').get();
-    const promises = userSnapshot.docs.map((doc) => updateUserHolderReward(doc.id));
-    await Promise.all(promises);
-  });
+      // update inviter referralReward
+      if (inviteCode) {
+        const inviteSnapshot = await firestore
+          .collection('user')
+          .where('referralCode', '==', inviteCode)
+          .limit(1)
+          .get();
+        if (!inviteSnapshot.empty) {
+          const referralReward = await contract.getUserReferralReward(_affID);
+          await inviteSnapshot.docs[0].ref.update({ referralReward: Number(referralReward.toString()) });
+        }
+      }
+
+      // update all user holderReward
+      const updateUserHolderReward = async (address) => {
+        const userId = Number((await contract.pIDxAddr_(address)).toString());
+        const holderReward = await contract.getUserHolderReward(userId);
+        await firestore
+          .collection('user')
+          .doc(address)
+          .update({
+            holderReward: formatEther(holderReward),
+          });
+      };
+
+      const userSnapshot = await firestore.collection('user').get();
+      const promises = userSnapshot.docs.map((doc) => updateUserHolderReward(doc.id));
+      await Promise.all(promises);
+    }
+  );
 
   contract.on(Events.SellPump, async (address, uId, rId, amount, event) => {
     try {
