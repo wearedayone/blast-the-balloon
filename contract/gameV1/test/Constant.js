@@ -1,0 +1,15 @@
+const BalloonRevertMessage = {
+  UserRegistered: 'User registered',
+  ARITHMETIC_OVERFLOW: 0x11,
+  DIVISION_BY_ZERO: 0x12,
+  ENUM_CONVERSION_OUT_OF_BOUNDS: 0x21,
+  INCORRECTLY_ENCODED_STORAGE_BYTE_ARRAY: 0x22,
+  POP_ON_EMPTY_ARRAY: 0x31,
+  ARRAY_ACCESS_OUT_OF_BOUNDS: 0x32,
+  TOO_MUCH_MEMORY_ALLOCATED: 0x41,
+  ZERO_INITIALIZED_VARIABLE: 0x51,
+};
+
+module.exports = {
+  BalloonRevertMessage,
+};

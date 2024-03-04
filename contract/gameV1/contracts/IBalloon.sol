@@ -10,34 +10,36 @@ interface IBalloon {
   event Register(
     uint256 _pID,
     address _addr,
-    string _name,
+    bytes32 _name,
     bytes32 _refC,
     uint256 _affID,
-    string _affName,
+    bytes32 _affName,
     bytes32 _affcode
   );
 
   event BuyPump(
     uint256 _pID,
     address _addr,
-    string _name,
+    bytes32 _name,
     bytes32 _refC,
     uint256 _affID,
-    string _affName,
+    bytes32 _affName,
     bytes32 _affcode,
     uint256 _amount,
-    uint256 _bTime
+    uint256 _bTime,
+    uint256 _rID
   );
+  event Withdraw(uint256 _pID, uint256 _amount);
 
   event SellPump(address _addr, uint256 _pID, uint256 _rID, uint256 _amount);
 
   function registerXID(uint256 _affID, bytes32 _name, bytes32 _refC) external;
 
-  function registerXCode(bytes32 _affcode, string memory _name, bytes32 _refC) external;
+  function registerXCode(bytes32 _affcode, bytes32 _name, bytes32 _refC) external;
 
   function buyPumpXID(uint256 _pID, uint256 _affID, uint256 amount) external payable;
 
-  function buyPumpXName(uint256 _pID, string memory _affName) external;
+  function buyPumpXName(uint256 _pID, bytes32 _affName) external;
 
   function buyPumpXCode(uint256 _pID, bytes32 _affcode) external;
 

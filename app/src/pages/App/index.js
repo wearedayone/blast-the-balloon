@@ -24,7 +24,7 @@ const App = () => {
       setEnded(now >= endTime);
     }
   }, [seasonState.season]);
-
+  console.log('reload app');
   return (
     <Box minHeight="100vh" bgcolor="#1b1b1b">
       <Winner

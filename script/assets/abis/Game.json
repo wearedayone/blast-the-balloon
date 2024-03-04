@@ -1,7 +1,4 @@
 {
-  "_format": "hh-sol-artifact-1",
-  "contractName": "Balloon",
-  "sourceName": "contracts/Balloon.sol",
   "abi": [
     {
       "inputs": [
@@ -52,9 +49,9 @@
         },
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "string",
           "name": "_name",
-          "type": "bytes32"
+          "type": "string"
         },
         {
           "indexed": false,
@@ -70,9 +67,9 @@
         },
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "string",
           "name": "_affName",
-          "type": "bytes32"
+          "type": "string"
         },
         {
           "indexed": false,
@@ -90,12 +87,6 @@
           "indexed": false,
           "internalType": "uint256",
           "name": "_bTime",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_rID",
           "type": "uint256"
         }
       ],
@@ -119,9 +110,9 @@
         },
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "string",
           "name": "_name",
-          "type": "bytes32"
+          "type": "string"
         },
         {
           "indexed": false,
@@ -137,9 +128,9 @@
         },
         {
           "indexed": false,
-          "internalType": "bytes32",
+          "internalType": "string",
           "name": "_affName",
-          "type": "bytes32"
+          "type": "string"
         },
         {
           "indexed": false,
@@ -284,25 +275,6 @@
       "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_pID",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "Withdraw",
-      "type": "event"
-    },
-    {
       "inputs": [],
       "name": "ADMIN_ROLE",
       "outputs": [
@@ -390,9 +362,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "bytes32",
+          "internalType": "string",
           "name": "_affName",
-          "type": "bytes32"
+          "type": "string"
         }
       ],
       "name": "buyPumpXName",
@@ -427,14 +399,8 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "estimatePrice",
+      "inputs": [],
+      "name": "divShare_",
       "outputs": [
         {
           "internalType": "uint256",
@@ -470,6 +436,11 @@
           "internalType": "uint256",
           "name": "_pID",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_rID",
+          "type": "uint256"
         }
       ],
       "name": "getUserHolderReward",
@@ -489,14 +460,9 @@
           "internalType": "uint256",
           "name": "_pID",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_rID",
-          "type": "uint256"
         }
       ],
-      "name": "getUserHolderRewardByRound",
+      "name": "getUserHolderReward",
       "outputs": [
         {
           "internalType": "uint256",
@@ -567,30 +533,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "_pID",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_rID",
-          "type": "uint256"
-        }
-      ],
-      "name": "getUserRewardByRound",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes32",
           "name": "role",
           "type": "bytes32"
@@ -632,19 +574,6 @@
     },
     {
       "inputs": [],
-      "name": "holShare_",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "jpShare_",
       "outputs": [
         {
@@ -671,51 +600,12 @@
     },
     {
       "inputs": [],
-      "name": "llW_",
+      "name": "opBalance_",
       "outputs": [
         {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "lpW_",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "nrW_",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "opAddr_",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -724,19 +614,6 @@
     {
       "inputs": [],
       "name": "opShare_",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "opW_",
       "outputs": [
         {
           "internalType": "uint256",
@@ -870,11 +747,6 @@
           "internalType": "uint256",
           "name": "lastB",
           "type": "uint256"
-        },
-        {
-          "internalType": "int256",
-          "name": "holderDebt",
-          "type": "int256"
         }
       ],
       "stateMutability": "view",
@@ -911,29 +783,14 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "holReward",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "winReward",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
+          "internalType": "int256",
           "name": "withdrawed",
-          "type": "uint256"
+          "type": "int256"
         },
         {
           "internalType": "bytes32",
           "name": "refC",
           "type": "bytes32"
-        },
-        {
-          "internalType": "uint256",
-          "name": "lRID",
-          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -973,9 +830,9 @@
           "type": "bytes32"
         },
         {
-          "internalType": "bytes32",
+          "internalType": "string",
           "name": "_name",
-          "type": "bytes32"
+          "type": "string"
         },
         {
           "internalType": "bytes32",
@@ -1073,6 +930,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "bool",
+          "name": "ended",
+          "type": "bool"
+        },
+        {
           "internalType": "uint256",
           "name": "pumpB",
           "type": "uint256"
@@ -1080,6 +942,11 @@
         {
           "internalType": "uint256",
           "name": "pumpS",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "divReward",
           "type": "uint256"
         },
         {
@@ -1095,21 +962,6 @@
         {
           "internalType": "uint256",
           "name": "prizePool",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "llPID",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "holReward",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "accHolPerPump",
           "type": "uint256"
         }
       ],
@@ -1146,148 +998,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "thD_",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "thW_",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_dRTime",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_dRWTime",
-          "type": "uint256"
-        }
-      ],
-      "name": "updateGameConfig",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_opAddr",
-          "type": "address"
-        }
-      ],
-      "name": "updateOpAddr",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_llW",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_lpW",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_oW",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_nrW",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_thW",
-          "type": "uint256"
-        }
-      ],
-      "name": "updatePrizeConfig",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_refShare",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_holShare",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_jpShare",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_opShare",
-          "type": "uint256"
-        }
-      ],
-      "name": "updatePrizeShare",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_bPrice",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_k",
-          "type": "uint256"
-        }
-      ],
-      "name": "updatePumpPrice",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

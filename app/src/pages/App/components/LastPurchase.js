@@ -29,7 +29,7 @@ const LastPurchase = ({ latestPurchase, season }) => {
     });
   };
 
-  console.log('latestPurchase', latestPurchase);
+  // console.log('latestPurchase', latestPurchase);
 
   useEffect(() => {
     interval.current && clearInterval(interval.current);

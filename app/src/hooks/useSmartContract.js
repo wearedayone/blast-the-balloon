@@ -32,7 +32,7 @@ const useSmartContract = ({ provider, checkNetwork, user, season }) => {
     if (user?.inviteCode) {
       inviterId = await gameContract.pIDxRefC_(formatBytes32String(user.inviteCode));
     }
-
+    console.log('registerXID', { inviterId, username, referralCode });
     await gameContract.registerXID(
       Number(inviterId.toString()),
       formatBytes32String(username),
@@ -43,27 +43,33 @@ const useSmartContract = ({ provider, checkNetwork, user, season }) => {
   };
 
   const buy = async ({ amount }) => {
+    console.log('buy', { amount, user });
     if (!season) return;
     const { pumpBought, pumpSold, pumpPrice } = season;
-    const total = calculateNextPumpBuyPriceBatch(pumpPrice.basePrice, pumpPrice.k, pumpBought - pumpSold, amount);
 
     await checkNetwork();
     const gameContract = getGameContract();
+    const basePrice = await gameContract.bPrice_();
+    const k = await gameContract.k_();
+    console.log({ k, basePrice });
 
+    const total = calculateNextPumpBuyPriceBatch(pumpPrice.basePrice, pumpPrice.k, pumpBought - pumpSold, amount);
+    const ethValue = await gameContract.estimatePrice(amount);
     let inviterId = 0;
     if (user?.inviteCode) {
       inviterId = await gameContract.pIDxRefC_(formatBytes32String(user.inviteCode));
     }
 
-    const userId = await gameContract.pIDxAddr_(user?.address);
+    const pID = await gameContract.pIDxAddr_(user?.id);
     console.log({
-      userId: Number(userId.toString()),
+      userId: Number(pID.toString()),
       inviterId,
       amount,
-      value: parseEther(`${total}`),
+      value: ethValue,
     });
-    const tx = await gameContract.buyPumpXID(Number(userId.toString()), inviterId, amount, {
-      value: parseEther(`${total}`),
+    const tx = await gameContract.buyPumpXID(Number(pID.toString()), inviterId, amount, {
+      // value: parseEther(`${total}`),
+      value: ethValue,
     });
     const receipt = await tx.wait();
 
@@ -74,6 +80,7 @@ const useSmartContract = ({ provider, checkNetwork, user, season }) => {
   };
 
   const sell = async ({ amount }) => {
+    console.log('Sell', { amount });
     await checkNetwork();
     const gameContract = getGameContract();
     await gameContract.sell(amount);
