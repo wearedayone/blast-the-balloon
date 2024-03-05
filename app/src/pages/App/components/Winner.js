@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material';
 
-const Winner = ({ ended, winners }) => {
+import { customFormat } from '../../../utils/numbers';
+
+const Winner = ({ ended, winners, rewards }) => {
   if (!ended) return;
 
   return (
@@ -62,12 +64,12 @@ const Winner = ({ ended, winners }) => {
               color="#DFFF00"
               align="center"
               lineHeight="60px">
-              {winners[0]?.reward}ETH
+              {customFormat(rewards[0] || 0, 6)}ETH
             </Typography>
           </Box>
         </Box>
         <Box flex={1} pl="3.5%" pr="2.5%" pb="20%" display="flex" alignItems="center" justifyContent="center" gap="10%">
-          {winners.slice(1).map((item) => (
+          {winners.slice(1).map((item, index) => (
             <Box
               key={item.id}
               display="flex"
@@ -99,7 +101,7 @@ const Winner = ({ ended, winners }) => {
                   color="#DFFF00"
                   align="center"
                   lineHeight="15px">
-                  {item.reward}ETH
+                  {customFormat(rewards[index + 1] || 0, 6)}ETH
                 </Typography>
               </Box>
             </Box>

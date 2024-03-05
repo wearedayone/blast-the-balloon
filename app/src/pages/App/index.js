@@ -24,42 +24,14 @@ const App = () => {
       setEnded(now >= endTime);
     }
   }, [seasonState.season]);
-  console.log('reload app');
+
+  const lastPurchaseUsers = leaderboardState.gamePlays?.sort(
+    (item1, item2) => item2.lastPurchaseTime - item1.lastPurchaseTime
+  );
+
   return (
     <Box minHeight="100vh" bgcolor="#1b1b1b">
-      <Winner
-        ended={ended}
-        winners={[
-          {
-            id: 1,
-            username: 'jack.handsome',
-            avatarURL:
-              'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max',
-            reward: 100,
-          },
-          {
-            id: 2,
-            username: 'jack.day1',
-            avatarURL:
-              'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max',
-            reward: 90,
-          },
-          {
-            id: 3,
-            username: 'jack.day2',
-            avatarURL:
-              'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max',
-            reward: 80,
-          },
-          {
-            id: 4,
-            username: 'jack.day3',
-            avatarURL:
-              'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max',
-            reward: 70,
-          },
-        ]}
-      />
+      <Winner ended={ended} winners={lastPurchaseUsers.slice(0, 4)} rewards={leaderboardState.lastPurchaseRewards} />
       <Box
         minHeight="100vh"
         p={2}
@@ -121,7 +93,7 @@ const App = () => {
                 address={walletState.address}
                 numberOfPump={userState?.gamePlay?.numberOfPump || 0}
                 disconnect={walletState.logout}
-                latestPurchase={leaderboardState.gamePlays.sort((a, b) => b.lastPurchaseTime - a.lastPurchaseTime)[0]}
+                latestPurchase={lastPurchaseUsers?.[0]}
               />
               <Leaderboard
                 leaderboardData={leaderboardState.gamePlays}
