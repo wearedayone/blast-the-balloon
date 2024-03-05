@@ -138,7 +138,7 @@ const Winner = ({ ended, winners, season, ethPriceInUsd, lastPurchaseRewards }) 
                 {customFormat(playerRewards, 3)}ETH
               </Typography>
               <Typography fontSize={20} fontWeight={600} textAlign="center" textTransform="uppercase" sx={{ mt: -1.5 }}>
-                {customFormat(playerRewards * ethPriceInUsd, 1)}
+                {customFormat(playerRewards * ethPriceInUsd, 1)} USD
               </Typography>
             </Box>
           )}
