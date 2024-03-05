@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 
+import { customFormat } from '../../../utils/numbers';
+
 const tabs = [
   { id: 'pumpers', title: 'TOP PUMPERS' },
   { id: 'last-purchase', title: 'LAST PURCHASE' },
@@ -135,7 +137,7 @@ const Leaderboard = ({ leaderboardData, topHoldersRewards, lastPurchaseRewards }
               <Grid item xs={4}>
                 <Box display="flex" alignItems="flex-end" justifyContent="flex-end">
                   <Typography fontSize={15} lineHeight="20px" align="center" fontWeight={500}>
-                    {rewards[index] ?? 0}
+                    {customFormat(rewards[index] ?? 0, 6)}
                   </Typography>
                   <Typography fontSize={12} align="center" fontWeight={300}>
                     eth
