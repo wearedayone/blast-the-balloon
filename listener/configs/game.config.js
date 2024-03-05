@@ -18,7 +18,7 @@ const configs = {
     basePrice: 0.001,
     k: 200000,
   },
-  pauseBetweenSeason: 4 * 60 * 60,
+  pauseBetweenSeason: 5 * 60,
 };
 
 export default configs;
