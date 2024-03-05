@@ -98,6 +98,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), a
         }}
         options={{
           cutout: isBigScreen ? '55%' : 75,
+          animation: false,
           plugins: {
             legend: { display: false },
             tooltip: { enabled: false },
@@ -132,6 +133,7 @@ const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), a
         }}
         options={{
           cutout: isBigScreen ? '50%' : 70,
+          animation: false,
           plugins: {
             legend: { display: false },
             tooltip: {
