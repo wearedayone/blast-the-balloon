@@ -3,21 +3,14 @@ import { Box, Typography } from '@mui/material';
 
 import { customFormat } from '../../../utils/numbers';
 
-const Winner = ({
-  ended,
-  winners,
-  season,
-  ethPriceInUsd,
-  topHoldersRewards,
-  lastPurchaseRewards,
-  playerLeaderboardIndex,
-}) => {
+const Winner = ({ ended, winners, season, ethPriceInUsd, lastPurchaseRewards }) => {
   const [timer, setTimer] = useState({
     h: 0,
     m: 0,
     s: 0,
   });
   const interval = useRef();
+  const playerLeaderboardIndex = useMemo(() => winners.findIndex(({ isUser }) => isUser), [winners]);
   const playerRank = useMemo(() => {
     if (playerLeaderboardIndex === -1) return null;
     let rankSuffix = 'th';
@@ -40,14 +33,9 @@ const Winner = ({
     return `${rank}${rankSuffix}`;
   }, [playerLeaderboardIndex]);
   const playerRewards = useMemo(
-    () => (topHoldersRewards[playerLeaderboardIndex] || 0) + (lastPurchaseRewards[playerLeaderboardIndex] || 0),
-    [topHoldersRewards, lastPurchaseRewards, playerLeaderboardIndex]
+    () => lastPurchaseRewards[playerLeaderboardIndex] || 0,
+    [lastPurchaseRewards, playerLeaderboardIndex]
   );
-  const jackpot = useMemo(() => {
-    if (!season?.prizePool || !season?.gameEndConfig) return 0;
-
-    return season.prizePool * season.gameEndConfig.lastLuckyW;
-  }, [season?.prizePool, season?.gameEndConfig]);
 
   const nextSeasonStartTime = useMemo(() => {
     if (!season?.estimatedEndTime || !season?.pauseBetweenSeason) return null;
@@ -80,7 +68,7 @@ const Winner = ({
     return () => interval.current && clearInterval(interval.current);
   }, [nextSeasonStartTime]);
 
-  if (!ended) return;
+  if (!ended || nextSeasonStartTime < Date.now()) return;
 
   return (
     <Box
@@ -167,7 +155,7 @@ const Winner = ({
               color="white"
               align="center"
               lineHeight="60px">
-              {customFormat(jackpot, 6)}ETH
+              {customFormat(lastPurchaseRewards[0] || 0, 6)}
               <span style={{ fontSize: 60 }}>ETH</span>
             </Typography>
           </Box>
@@ -216,7 +204,7 @@ const Winner = ({
                   fontFamily="Oswald, sans-serif"
                   align="center"
                   lineHeight={1}>
-                  {customFormat(topHoldersRewards[index] || 0, 6)}ETH
+                  {customFormat(lastPurchaseRewards[index + 1] || 0, 6)}ETH
                 </Typography>
               </Box>
             </Box>

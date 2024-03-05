@@ -34,11 +34,9 @@ const App = () => {
       <Winner
         ended={ended}
         season={seasonState.season}
-        topHoldersRewards={leaderboardState.topHoldersRewards}
         lastPurchaseRewards={leaderboardState.lastPurchaseRewards}
-        playerLeaderboardIndex={leaderboardState.gamePlays.findIndex(({ isUser }) => isUser)}
         ethPriceInUsd={marketState.market?.ethPriceInUsd}
-        winners={leaderboardState.gamePlays.sort((a, b) => b.numberOfPump - a.numberOfPump)}
+        winners={leaderboardState.gamePlays.sort((a, b) => b.lastPurchaseTime - a.lastPurchaseTime)}
       />
       <Box
         minHeight="100vh"
