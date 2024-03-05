@@ -76,11 +76,11 @@ const LastPurchase = ({ latestPurchase, season }) => {
             is about to win
           </Typography>
         </Box>
-        <Box px={0.5} position="absolute" top="17%" right="7%" display="flex" alignItems="flex-end">
-          <Typography fontSize={80} color="#DFFF00">
-            {customFormat(jackpot, 3)}
+        <Box px={0.5} position="absolute" top="47%" right="7%" display="flex" alignItems="flex-end">
+          <Typography fontSize={40} color="#DFFF00">
+            {customFormat(jackpot, 5)}
           </Typography>
-          <Typography fontSize={40} color="white" sx={{ mb: 2 }}>
+          <Typography fontSize={20} color="white" sx={{ mb: 2 }}>
             ETH
           </Typography>
         </Box>

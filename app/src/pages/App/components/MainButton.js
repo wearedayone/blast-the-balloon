@@ -48,8 +48,8 @@ const MainButton = () => {
     const n = pumpBought - pumpSold;
     const total =
       mode === 'buy'
-        ? calculateNextPumpBuyPriceBatch(pumpPrice.basePrice, pumpPrice.k, n, quantity)
-        : calculateNextPumpSellPriceBatch(pumpPrice.basePrice, pumpPrice.k, n, quantity, buyConfig.prizePool);
+        ? calculateNextPumpBuyPriceBatch(pumpPrice?.basePrice || 0, pumpPrice.k, n, quantity)
+        : calculateNextPumpSellPriceBatch(pumpPrice?.basePrice || 0, pumpPrice.k, n, quantity, buyConfig.prizePool);
     return total;
   }, [season, quantity, mode]);
 
