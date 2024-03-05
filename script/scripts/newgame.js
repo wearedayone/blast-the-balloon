@@ -16,6 +16,11 @@ const main = async () => {
   await firestore.collection('system').doc('market').set({ ethPriceInUsd: ethPriceRes.data.data.rates.USD });
 
   // season
+  const seasonSnapshot = await firestore.collection('season').get();
+  for (let doc of seasonSnapshot.docs) {
+    await doc.ref.delete();
+  }
+
   const now = Date.now();
   await firestore
     .collection('season')

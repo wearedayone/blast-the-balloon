@@ -68,11 +68,16 @@ const listener = async () => {
       // update season
       const round = await contract.round_(roundId);
       console.log('BuyPump', { round });
+      const startTimeUnix = Number(round.strT.toString());
       const endTimeUnix = Number(round.endT.toString());
+      const maxEndTimeUnix = Number(round.maxET.toString());
 
       const prizePool = formatEther(round.prizePool);
       const eJackpot = formatEther(round.eJackpot);
       const pumpB = Number(round.pumpB.toString());
+      const pumpS = Number(round.pumpS.toString());
+
+      const dRWTime_ = await contract.dRWTime_();
 
       const seasonDoc = await firestore.collection('season').doc(`${roundId}`).get();
       if (seasonDoc.exists) {
@@ -94,13 +99,23 @@ const listener = async () => {
             estimatedEndTime: admin.firestore.Timestamp.fromMillis(endTimeUnix * 1000),
             prizePool,
             eJackpot,
+            startTime: admin.firestore.Timestamp.fromMillis(startTimeUnix * 1000),
+            estimatedEndTime: admin.firestore.Timestamp.fromMillis(endTimeUnix * 1000),
+            maxEndTime: admin.firestore.Timestamp.fromMillis(maxEndTimeUnix * 1000),
+            pauseBetweenSeason: dRWTime_.toNumber(),
+            endGameJackpot: eJackpot,
+            pumpBought: pumpB,
+            pumpSold: pumpS,
+            buyConfig: gameConfigs.buyConfig,
+            gameEndConfig: gameConfigs.gameEndConfig,
+            pumpPrice: gameConfigs.pumpPrice,
           });
       }
 
       // update user game play
       const userGamePlay = await contract.plyrRnds_(userId, roundId);
       const userGamePlayNumberOfPumps = Number(userGamePlay.pumpB.toString()) - Number(userGamePlay.pumpS.toString());
-
+      console.log({ _addr, userGamePlayNumberOfPumps });
       const gamePlaySnapshot = await firestore
         .collection('gamePlay')
         .where('userId', '==', _addr.toLowerCase())
@@ -110,6 +125,14 @@ const listener = async () => {
 
       if (!gamePlaySnapshot.empty) {
         await gamePlaySnapshot.docs[0].ref.update({
+          numberOfPump: userGamePlayNumberOfPumps,
+          lastPurchaseTime: admin.firestore.Timestamp.fromMillis(buyTime * 1000),
+        });
+      } else {
+        await firestore.collection('gamePlay').add({
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          userId: _addr.toLowerCase(),
+          seasonId: `${roundId}`,
           numberOfPump: userGamePlayNumberOfPumps,
           lastPurchaseTime: admin.firestore.Timestamp.fromMillis(buyTime * 1000),
         });
@@ -127,6 +150,13 @@ const listener = async () => {
           await inviteSnapshot.docs[0].ref.update({ referralReward: Number(referralReward.toString()) });
         }
       }
+      // const userReferralProfitSnapshot()
+
+      // await firestore.collection('userReferralProfit').add({
+      //   userId: inviterSnapshot.docs[0].id,
+      //   referralId: address.toLowerCase(),
+      //   profit: 0,
+      // });
 
       // update all user holderReward
       const updateUserHolderReward = async (address) => {
@@ -231,7 +261,7 @@ const listener = async () => {
         lastPurchaseTime: admin.firestore.Timestamp.fromMillis(0),
       })
     );
-    await Promise.all(promises);
+    // await Promise.all(promises);
 
     await firestore
       .collection('system')

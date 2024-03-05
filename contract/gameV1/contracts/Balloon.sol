@@ -183,7 +183,7 @@ contract Balloon is AccessControl, IBalloon {
       round_[rID_].endT -= dTNumber_;
       decreasing = true;
       time = dTNumber_;
-    } else if (seed % 10000 > iTRatio_) {
+    } else if (seed % 10000 > dTRatio_) {
       // increase round end time
       if (round_[rID_].maxET > 0) {
         if (round_[rID_].endT + iTNumber_ > round_[rID_].maxET) {
