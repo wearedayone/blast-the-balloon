@@ -89,6 +89,7 @@ const listener = async () => {
             estimatedEndTime: admin.firestore.Timestamp.fromMillis(endTimeUnix * 1000),
             prizePool,
             eJackpot,
+            lastPurchaseTime: admin.firestore.Timestamp.fromMillis(buyTime * 1000),
           });
       } else {
         await firestore
@@ -109,6 +110,7 @@ const listener = async () => {
             buyConfig: gameConfigs.buyConfig,
             gameEndConfig: gameConfigs.gameEndConfig,
             pumpPrice: gameConfigs.pumpPrice,
+            lastPurchaseTime: admin.firestore.Timestamp.fromMillis(buyTime * 1000),
           });
       }
 
@@ -170,9 +172,9 @@ const listener = async () => {
           });
       };
 
-      const userSnapshot = await firestore.collection('user').get();
-      const promises = userSnapshot.docs.map((doc) => updateUserHolderReward(doc.id));
-      await Promise.all(promises);
+      // const userSnapshot = await firestore.collection('user').get();
+      // const promises = userSnapshot.docs.map((doc) => updateUserHolderReward(doc.id));
+      // await Promise.all(promises);
     }
   );
 
@@ -252,15 +254,15 @@ const listener = async () => {
 
     const userSnapshot = await firestore.collection('user').get();
 
-    const promises = userSnapshot.docs.map((doc) =>
-      firestore.collection('gamePlay').add({
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        userId: doc.id,
-        seasonId: `${roundId}`,
-        numberOfPump: 0,
-        lastPurchaseTime: admin.firestore.Timestamp.fromMillis(0),
-      })
-    );
+    // const promises = userSnapshot.docs.map((doc) =>
+    //   firestore.collection('gamePlay').add({
+    //     createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    //     userId: doc.id,
+    //     seasonId: `${roundId}`,
+    //     numberOfPump: 0,
+    //     lastPurchaseTime: admin.firestore.Timestamp.fromMillis(0),
+    //   })
+    // );
     // await Promise.all(promises);
 
     await firestore

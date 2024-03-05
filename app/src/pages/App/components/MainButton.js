@@ -68,7 +68,7 @@ const MainButton = () => {
     } catch (err) {
       console.error(err);
     }
-    setTimeout(() => setLoading(false), 1500);
+    setTimeout(() => setLoading(false), 2500);
   };
 
   console.log({ loading });
