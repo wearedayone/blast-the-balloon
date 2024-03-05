@@ -48,6 +48,12 @@ const Winner = ({
 
     return season.estimatedEndTime.toDate().getTime() + season.pauseBetweenSeason * 1000;
   }, [season?.estimatedEndTime, season?.pauseBetweenSeason]);
+  const jackpot = useMemo(() => {
+    if (!season?.prizePool || !season?.gameEndConfig) return 0;
+
+    return season.prizePool * season.gameEndConfig.lastLuckyW;
+  }, [season?.prizePool, season?.gameEndConfig]);
+
   const countdownTimer = useMemo(() => `${timer.h}:${timer.m}:${timer.s}`, [timer]);
 
   const countdown = () => {
@@ -161,7 +167,7 @@ const Winner = ({
               color="white"
               align="center"
               lineHeight="60px">
-              {topHoldersRewards[0]}
+              {customFormat(jackpot, 3)}
               <span style={{ fontSize: 60 }}>ETH</span>
             </Typography>
           </Box>
@@ -210,7 +216,7 @@ const Winner = ({
                   fontFamily="Oswald, sans-serif"
                   align="center"
                   lineHeight={1}>
-                  {topHoldersRewards[index]} ETH
+                  {topHoldersRewards[index - 1]} ETH
                 </Typography>
               </Box>
             </Box>
