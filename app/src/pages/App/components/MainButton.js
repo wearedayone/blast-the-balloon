@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
+import Loading from '../../../components/Loading';
 import useAppContext from '../../../hooks/useAppContext';
 import { customFormat } from '../../../utils/numbers';
 import { calculateNextPumpBuyPriceBatch, calculateNextPumpSellPriceBatch } from '../../../utils/formulas';
@@ -67,8 +68,10 @@ const MainButton = () => {
     } catch (err) {
       console.error(err);
     }
-    setLoading(false);
+    setTimeout(() => setLoading(false), 1500);
   };
+
+  console.log({ loading });
 
   if (confirmed) {
     return (
@@ -85,6 +88,7 @@ const MainButton = () => {
           setConfirming(false);
           setQuantity(1);
         }}>
+        <Loading open={loading} />
         <Typography fontSize={25} fontWeight={700} fontFamily="Oxygen, sans-serif" color="#fff" align="center">
           Confirmed
         </Typography>
@@ -95,6 +99,7 @@ const MainButton = () => {
   if (confirming) {
     return (
       <Box position="relative">
+        <Loading open={loading} />
         <img src="/images/action-container.png" alt="container" />
         <Box position="absolute" top="-20px" left="calc(100% + 10px)" sx={{ '& img': { cursor: 'pointer' } }}>
           <img
@@ -185,6 +190,7 @@ const MainButton = () => {
 
   return (
     <Box>
+      <Loading open={loading} />
       <Box
         position="relative"
         width="150px"
