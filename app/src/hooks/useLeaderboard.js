@@ -38,14 +38,16 @@ const useLeaderboard = ({ uid, seasonId, gameEndConfig, prizePool }) => {
         const userIds = snapshot.docs.map((doc) => doc.data().userId);
 
         const { users, numberOfPump, lastPurchaseTime } = await getUserBatch(userIds, seasonId);
-        const data = users.map((item) => ({
-          id: item.id,
-          isUser: item.id === uid,
-          username: item.username,
-          avatarURL: item.avatarURL,
-          numberOfPump: numberOfPump[item.id],
-          lastPurchaseTime: lastPurchaseTime[item.id],
-        }));
+        const data = users
+          .map((item) => ({
+            id: item.id,
+            isUser: item.id === uid,
+            username: item.username,
+            avatarURL: item.avatarURL,
+            numberOfPump: numberOfPump[item.id],
+            lastPurchaseTime: lastPurchaseTime[item.id],
+          }))
+          .filter(({ numberOfPump }) => numberOfPump > 0);
 
         setGamePlays(data);
       });
