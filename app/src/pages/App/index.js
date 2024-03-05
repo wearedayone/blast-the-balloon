@@ -91,7 +91,7 @@ const App = () => {
             <Box height="100%" display="flex" flexDirection="column" alignItems="center">
               <Timer ended={ended} setEnded={setEnded} endTime={endTime} />
               <Box flex={1} display="flex" flexDirection="column" justifyContent="center"></Box>
-              <MainButton />
+              <MainButton disabled={ended} />
             </Box>
           </Grid>
           <Grid item xs={4}>

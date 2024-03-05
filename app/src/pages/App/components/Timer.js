@@ -22,6 +22,8 @@ const Timer = ({ endTime, ended, setEnded }) => {
       return;
     }
     const diffInSeconds = (endTime - now) / 1000;
+    if (isNaN(diffInSeconds)) return;
+
     const h = parseInt(diffInSeconds / (60 * 60));
     const m = parseInt((diffInSeconds - h * 60 * 60) / 60);
     const s = parseInt(diffInSeconds % 60);

@@ -8,20 +8,20 @@ import useAppContext from '../../../hooks/useAppContext';
 import { customFormat } from '../../../utils/numbers';
 import { calculateNextPumpBuyPriceBatch, calculateNextPumpSellPriceBatch } from '../../../utils/formulas';
 
-const MainButton = () => {
+const MainButton = ({ disabled }) => {
   const {
     userState: { gamePlay },
     smartContractState: { buy, sell },
     seasonState: { season },
   } = useAppContext();
   const [mode, setMode] = useState('buy');
-  const [confirming, setConfirming] = useState(false);
+  const [confirming, setConfirming] = useState(true);
   const [confirmed, setConfirmed] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [openInstruction, setOpenInstruction] = useState(false);
 
-  const toggleMode = () => setMode(mode === 'buy' ? 'sell' : 'buy');
+  const toggleMode = () => !disabled && setMode(mode === 'buy' ? 'sell' : 'buy');
 
   const mainBtnText = mode === 'buy' ? 'Buy' : 'Sell';
   const secondBtnText = mode === 'buy' ? 'Sell' : 'Buy';
@@ -71,7 +71,13 @@ const MainButton = () => {
     setTimeout(() => setLoading(false), 2500);
   };
 
-  console.log({ loading });
+  useEffect(() => {
+    if (disabled) {
+      setConfirmed(false);
+      setConfirming(false);
+      setQuantity(1);
+    }
+  }, [disabled]);
 
   if (confirmed) {
     return (
@@ -181,6 +187,19 @@ const MainButton = () => {
                   {mode === 'buy' ? 'BUY' : 'SELL'}
                 </Typography>
               </Box>
+              <Box
+                position="relative"
+                width="32px"
+                borderRadius="50%"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                sx={{ aspectRatio: '1/1', cursor: 'pointer', ...(mode === 'sell' ? buyBtnStyle : sellBtnStyle) }}
+                onClick={toggleMode}>
+                <Typography fontSize={12} fontWeight={600}>
+                  {mode === 'buy' ? 'SELL' : 'BUY'}
+                </Typography>
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -199,7 +218,7 @@ const MainButton = () => {
         alignItems="center"
         justifyContent="center"
         sx={{ aspectRatio: '1/1', cursor: 'pointer', ...mainBtnStyle }}
-        onClick={() => setConfirming(true)}>
+        onClick={() => !disabled && setConfirming(true)}>
         <Box position="absolute" top="-20px" left="100%" sx={{ '& img': { cursor: 'pointer' } }}>
           <img
             src="/images/info-btn.png"
