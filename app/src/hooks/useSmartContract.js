@@ -1,7 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from '@ethersproject/contracts';
 import { formatBytes32String } from '@ethersproject/strings';
-import { parseEther } from '@ethersproject/units';
+import { formatEther, parseEther } from '@ethersproject/units';
 
 import environments from '../utils/environments';
 import { calculateNextPumpBuyPriceBatch } from '../utils/formulas';
@@ -79,6 +79,33 @@ const useSmartContract = ({ provider, checkNetwork, user, season }) => {
     // TODO: implement backend listener to update gamePlay in firestore
   };
 
+  const getUserReferralReward = async (address) => {
+    await checkNetwork();
+    const gameContract = getGameContract();
+    const pID = await gameContract.pIDxAddr_(address);
+    const reward = await gameContract.getUserReferralReward(Number(pID.toString()));
+    console.log('referral reward', formatEther(reward));
+    return Number(formatEther(reward))
+  };
+
+  const getUserHolderReward = async (address) => {
+    await checkNetwork();
+    const gameContract = getGameContract();
+    const pID = await gameContract.pIDxAddr_(address);
+    const reward = await gameContract.getUserHolderReward(pID);
+    console.log('holder reward', formatEther(reward));
+    return Number(formatEther(reward))
+  };
+
+  const getUserLockedValue = async (address) => {
+    await checkNetwork();
+    const gameContract = getGameContract();
+    const pID = await gameContract.pIDxAddr_(address);
+    const reward = await gameContract.getUserPendingReward(pID);
+    console.log('locked value', formatEther(reward));
+    return Number(formatEther(reward))
+  };
+
   const sell = async ({ amount }) => {
     console.log('Sell', { amount });
     await checkNetwork();
@@ -104,7 +131,16 @@ const useSmartContract = ({ provider, checkNetwork, user, season }) => {
     return Number(res.toString());
   };
 
-  return { createReferralCode, buy, sell, withdraw, getRoundTimeInSecs };
+  return {
+    createReferralCode,
+    buy,
+    sell,
+    withdraw,
+    getRoundTimeInSecs,
+    getUserReferralReward,
+    getUserHolderReward,
+    getUserLockedValue,
+  };
 };
 
 export default useSmartContract;

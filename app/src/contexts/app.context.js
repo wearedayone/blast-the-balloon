@@ -6,6 +6,7 @@ import useSeason from '../hooks/useSeason';
 import useMarket from '../hooks/useMarket';
 import useUserData from '../hooks/useUserData';
 import useLeaderboard from '../hooks/useLeaderboard';
+import useUserRewards from '../hooks/useUserRewards';
 
 export const AppContext = createContext();
 
@@ -30,10 +31,24 @@ export const AppContextProvider = ({ children }) => {
     user: userState.user,
     season: seasonState.season,
   });
+  const userRewardsState = useUserRewards({
+    address: walletState.address,
+    getUserReferralReward: smartContractState.getUserReferralReward,
+    getUserHolderReward: smartContractState.getUserHolderReward,
+    getUserLockedValue: smartContractState.getUserLockedValue,
+  });
 
   return (
     <AppContext.Provider
-      value={{ walletState, seasonState, marketState, userState, leaderboardState, smartContractState }}>
+      value={{
+        walletState,
+        seasonState,
+        marketState,
+        userState,
+        userRewardsState,
+        leaderboardState,
+        smartContractState,
+      }}>
       {children}
     </AppContext.Provider>
   );

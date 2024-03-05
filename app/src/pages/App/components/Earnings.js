@@ -12,7 +12,7 @@ const isBigScreen = window.screen.height > 1000;
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const Earnings = ({ referralReward, holderReward, lockedValue = Math.random(), address, ethPriceInUsd }) => {
+const Earnings = ({ referralReward, holderReward, lockedValue, address, ethPriceInUsd }) => {
   const total = useMemo(() => referralReward + holderReward + lockedValue, [referralReward, holderReward, lockedValue]);
 
   const gap = useMemo(() => total * 0.01, [total]);

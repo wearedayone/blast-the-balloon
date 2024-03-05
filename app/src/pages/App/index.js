@@ -14,7 +14,8 @@ import Winner from './components/Winner';
 import useAppContext from '../../hooks/useAppContext';
 
 const App = () => {
-  const { userState, seasonState, marketState, leaderboardState, walletState, smartContractState } = useAppContext();
+  const { userState, userRewardsState, seasonState, marketState, leaderboardState, walletState, smartContractState } =
+    useAppContext();
   const [ended, setEnded] = useState(false);
   const [drTime, setDrTime] = useState(600);
 
@@ -80,8 +81,9 @@ const App = () => {
                 <Referral refCode={userState?.user?.referralCode || ''} referrals={userState?.referralUsers || []} />
               </Box>
               <Earnings
-                referralReward={userState?.user?.referralReward}
-                holderReward={userState?.user?.holderReward}
+                referralReward={userRewardsState.referralReward}
+                holderReward={userRewardsState.holderReward}
+                lockedValue={userRewardsState.lockedValue}
                 address={walletState.address}
                 ethPriceInUsd={marketState.market?.ethPriceInUsd}
               />
