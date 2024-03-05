@@ -17,7 +17,7 @@ const Timer = ({ endTime, ended, setEnded }) => {
         m: 0,
         s: 0,
       });
-      setEnded(true);
+      setEnded(!ended);
       interval.current && clearInterval(interval.current);
       return;
     }

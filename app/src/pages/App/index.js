@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Box, Grid } from '@mui/material';
 
 import Balloon from './components/Balloon';
@@ -14,8 +14,16 @@ import Winner from './components/Winner';
 import useAppContext from '../../hooks/useAppContext';
 
 const App = () => {
-  const { userState, seasonState, marketState, leaderboardState, walletState } = useAppContext();
+  const { userState, seasonState, marketState, leaderboardState, walletState, smartContractState } = useAppContext();
   const [ended, setEnded] = useState(false);
+  const [drTime, setDrTime] = useState(600);
+
+  useEffect(() => {
+    smartContractState
+      .getRoundTimeInSecs()
+      .then((res) => setDrTime(res))
+      .catch((err) => console.error(err));
+  }, []);
 
   useEffect(() => {
     if (seasonState.season) {
@@ -28,6 +36,21 @@ const App = () => {
   const lastPurchaseUsers = leaderboardState.gamePlays?.sort(
     (item1, item2) => item2.lastPurchaseTime - item1.lastPurchaseTime
   );
+
+  const endTime = useMemo(() => {
+    if (seasonState.season) {
+      const now = Date.now();
+      const seasonEndTime = seasonState.season.estimatedEndTime.toDate().getTime();
+      const nextSeasonStartTime = seasonEndTime + seasonState.season.pauseBetweenSeason * 1000;
+      const nextSeasonEndTime = nextSeasonStartTime + drTime * 1000;
+
+      if (now < seasonEndTime) return seasonEndTime;
+      if (now < nextSeasonStartTime) return nextSeasonStartTime;
+      if (now < nextSeasonEndTime) return nextSeasonEndTime;
+
+      return now;
+    }
+  }, [seasonState.season, ended, drTime]);
 
   return (
     <Box minHeight="100vh" bgcolor="#1b1b1b">
@@ -66,18 +89,7 @@ const App = () => {
           </Grid>
           <Grid item xs={4}>
             <Box height="100%" display="flex" flexDirection="column" alignItems="center">
-              <Timer
-                ended={ended}
-                setEnded={setEnded}
-                endTime={
-                  ended
-                    ? seasonState.season?.estimatedEndTime.toDate().getTime() +
-                      seasonState.season?.pauseBetweenSeason * 1000
-                    : seasonState.season?.estimatedEndTime
-                    ? seasonState.season?.estimatedEndTime.toDate().getTime()
-                    : Date.now()
-                }
-              />
+              <Timer ended={ended} setEnded={setEnded} endTime={endTime} />
               <Box flex={1} display="flex" flexDirection="column" justifyContent="center"></Box>
               <MainButton />
             </Box>

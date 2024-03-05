@@ -96,7 +96,15 @@ const useSmartContract = ({ provider, checkNetwork, user, season }) => {
     // TODO: implement backend listener to update gamePlay in firestore
   };
 
-  return { createReferralCode, buy, sell, withdraw };
+  const getRoundTimeInSecs = async () => {
+    await checkNetwork();
+    const gameContract = getGameContract();
+    const res = await gameContract.dRTime_();
+
+    return Number(res.toString());
+  };
+
+  return { createReferralCode, buy, sell, withdraw, getRoundTimeInSecs };
 };
 
 export default useSmartContract;
